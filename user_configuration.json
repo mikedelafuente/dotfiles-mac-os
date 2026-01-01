@@ -1,0 +1,93 @@
+{
+    "app_config": {
+        "audio_config": {
+            "audio": "pipewire"
+        },
+        "bluetooth_config": {
+            "enabled": true
+        }
+    },
+    "archinstall-language": "English",
+    "auth_config": null,
+    "bootloader": "Grub",
+    "custom_commands": [],
+    "disk_config": {
+        "config_type": "default_layout",
+        "device_modifications": []
+   },
+    "hostname": null,
+    "kernels": [
+        "linux"
+    ],
+    "locale_config": {
+        "kb_layout": "us",
+        "sys_enc": "UTF-8",
+        "sys_lang": "en_US.UTF-8"
+    },
+    "mirror_config": {
+        "custom_repositories": [],
+        "custom_servers": [],
+        "mirror_regions": {},
+        "optional_repositories": [
+            "multilib"
+        ]
+    },
+    "network_config": {
+        "type": "nm"
+    },
+    "ntp": true,
+    "packages": [
+        "base-devel",
+        "git",
+        "linux-headers",
+        "man-db",
+        "firefox",
+        "curl",
+        "wget",
+        "xsel",
+        "fzf",
+        "ripgrep",
+        "fd",
+        "bat",
+        "htop",
+        "ncdu",
+        "tree",
+        "jq",
+        "tmux",
+        "net-tools",
+        "btop",
+        "duf",
+        "stow",
+        "shellcheck",
+        "github-cli",
+        "tldr",
+        "fastfetch",
+        "zoxide",
+        "neovim",
+        "nodejs",
+        "npm"
+    ],
+    "parallel_downloads": 0,
+    "profile_config": {
+        "gfx_driver": "Nvidia (open kernel module for newer GPUs, Turing+)",
+        "greeter": "gdm",
+        "profile": {
+            "custom_settings": {
+                "GNOME": {},
+                "Hyprland": {
+                    "seat_access": "polkit"
+                }
+            },
+            "details": [
+                "Hyprland",
+                "GNOME"
+            ],
+            "main": "Desktop"
+        }
+    },
+    "script": null,
+    "services": [],
+    "swap": true,
+    "timezone": "US/Arizona",
+    "version": "3.0.11"
+}
