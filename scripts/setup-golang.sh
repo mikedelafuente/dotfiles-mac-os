@@ -1,7 +1,11 @@
 #!/bin/bash
 
 # --------------------------
-# Import Common Header 
+# Setup Go (Golang) for macOS
+# --------------------------
+
+# --------------------------
+# Import Common Header
 # --------------------------
 
 # add header file
@@ -17,7 +21,7 @@ else
 fi
 
 # --------------------------
-# End Import Common Header 
+# End Import Common Header
 # --------------------------
 
 print_tool_setup_start "Go (golang)"
@@ -26,36 +30,18 @@ print_tool_setup_start "Go (golang)"
 # Install Golang
 # --------------------------
 
-# Check if Golang is already installed
-if command -v go &> /dev/null; then
-    print_info_message "Golang is already installed. Skipping installation."
-else
-    print_info_message "Installing Go from official Arch repositories"
-
-    # Install Golang
-    sudo pacman -S --needed --noconfirm go
-fi
+print_info_message "Installing Go via Homebrew"
+brew_install_formula go
 
 # Print Golang version
 print_info_message "Golang version: $(go version)"
 
-# Install any extra tooling considered standard for Go development on Arch
-EXTRA_GO_PACKAGES=("gopls")
+# Install gopls (Go Language Server) via Homebrew
+print_info_message "Installing gopls (Go Language Server)"
+brew_install_formula gopls
 
-# Batch check and install extra packages
-PACKAGES_TO_INSTALL=()
-for package in "${EXTRA_GO_PACKAGES[@]}"; do
-    if ! pacman -Q "$package" &> /dev/null; then
-        PACKAGES_TO_INSTALL+=("$package")
-    else
-        print_info_message "$package is already installed"
-    fi
-done
-
-if [ ${#PACKAGES_TO_INSTALL[@]} -gt 0 ]; then
-    print_info_message "Installing Go development tools: ${PACKAGES_TO_INSTALL[*]}"
-    sudo pacman -S --needed --noconfirm "${PACKAGES_TO_INSTALL[@]}"
-fi
+print_success_message "Go installed successfully!"
+print_info_message "GOPATH is automatically set by Go (defaults to ~/go)"
 
 print_tool_setup_complete "Go (golang)"
 

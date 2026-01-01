@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # --------------------------
-# Setup Git and SSH Keys for Arch Linux
+# Setup Git and SSH Keys for macOS
 # --------------------------
 
 # --------------------------
@@ -58,8 +58,8 @@ print_tool_setup_start "Git"
 
 # Install Git if not already installed
 if ! command -v git &> /dev/null; then
-    print_info_message "Git not found. Installing Git via pacman"
-    sudo pacman -S --needed --noconfirm git
+    print_info_message "Git not found. Installing Git via Homebrew"
+    brew_install_formula git
 else
     print_info_message "Git is already installed (version: $(git --version))"
 fi
@@ -120,8 +120,8 @@ fi
 # --------------------------
 print_info_message "Checking for lazygit installation"
 if ! command -v lazygit &> /dev/null; then
-    print_info_message "lazygit not found. Installing lazygit via pacman"
-    sudo pacman -S --needed --noconfirm lazygit
+    print_info_message "lazygit not found. Installing lazygit via Homebrew"
+    brew_install_formula lazygit
 else
     print_info_message "lazygit is already installed (version: $(lazygit --version))"
 fi

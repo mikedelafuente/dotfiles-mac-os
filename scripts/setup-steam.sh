@@ -35,19 +35,7 @@ fi
 
 print_tool_setup_start "Steam"
 
-# --------------------------
-# Enable Multilib Repository
-# --------------------------
-
-# Check if multilib repository is enabled
-if ! grep -q "^\[multilib\]" /etc/pacman.conf; then
-    print_info_message "Enabling multilib repository"
-    sudo sed -i '/^#\[multilib\]/,/^#Include = \/etc\/pacman.d\/mirrorlist/ s/^#//' /etc/pacman.conf
-    sudo pacman -Sy --noconfirm
-    print_info_message "Multilib repository enabled"
-else
-    print_info_message "Multilib repository already enabled"
-fi
+# Note: multilib repository setup not needed on macOS
 
 # --------------------------
 # Install Steam
@@ -58,7 +46,7 @@ if ! command -v steam &> /dev/null; then
     print_info_message "Installing Steam from multilib repository"
 
     # Install Steam
-    sudo pacman -S --needed --noconfirm steam
+    brew_install_cask steam
 
     print_info_message "Steam installed successfully"
     print_info_message "You can launch Steam from your application menu or run: steam"

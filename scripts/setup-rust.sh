@@ -1,26 +1,21 @@
 #!/bin/bash
 
 # --------------------------
-# Setup Rust and Cargo for Arch Linux
+# Setup Rust and Cargo for macOS
 # --------------------------
-# Rust is installed via rustup, which is the recommended method for Arch.
-# Arch provides two options:
-# 1. Prepackaged Rust (pacman -S rust) - auto-updates via pacman
-# 2. Rustup (pacman -S rustup, then rustup-init) - standard Rust tooling
+# Rust is installed via rustup, which is the standard method across all platforms.
 #
-# This script uses rustup because:
-# - Allows multiple toolchain versions (stable, beta, nightly)
+# Rustup provides:
+# - Multiple toolchain versions (stable, beta, nightly)
 # - Easy updates with 'rustup update'
 # - Component management (rust-analyzer, clippy, rustfmt, etc.)
 # - Cross-compilation support
 # - Official support from the Rust team
 # - Industry standard approach
-#
-# Reference: https://wiki.archlinux.org/title/Rust
 # --------------------------
 
 # --------------------------
-# Import Common Header 
+# Import Common Header
 # --------------------------
 
 # add header file
@@ -36,25 +31,25 @@ else
 fi
 
 # --------------------------
-# End Import Common Header 
+# End Import Common Header
 # --------------------------
 
 print_tool_setup_start "Rust and Cargo"
 
 # --------------------------
-# Install Rustup (Arch's Recommended Method)
+# Install Rustup
 # --------------------------
 
 # Check if Rust is already installed
 if ! command -v cargo &> /dev/null; then
-    print_info_message "Installing rustup via pacman"
+    print_info_message "Installing rustup via Homebrew"
 
-    # Install rustup from Arch repositories
-    sudo pacman -S --needed --noconfirm rustup
+    # Install rustup-init from Homebrew
+    brew_install_formula rustup-init
 
-    # Install stable toolchain and set as default
-    print_info_message "Installing stable Rust toolchain"
-    rustup default stable
+    # Run rustup-init to install stable toolchain
+    print_info_message "Running rustup-init to install stable Rust toolchain"
+    rustup-init -y --default-toolchain stable
 
     # Source the cargo environment for immediate use
     # shellcheck source=/dev/null

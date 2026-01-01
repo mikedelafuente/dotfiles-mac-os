@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # --------------------------
-# Setup Minikube for Arch Linux
+# Setup Minikube for macOS
 # --------------------------
 
 # --------------------------
@@ -38,7 +38,7 @@ if command -v minikube >/dev/null 2>&1 && minikube version >/dev/null 2>&1; then
   # Check if kubectl is also installed
   if ! command -v kubectl >/dev/null 2>&1; then
     print_info_message "kubectl is not installed. Installing kubectl..."
-    sudo pacman -S --needed --noconfirm kubectl
+    brew_install_formula kubectl
   else
     print_info_message "kubectl is already installed."
   fi
@@ -46,7 +46,7 @@ if command -v minikube >/dev/null 2>&1 && minikube version >/dev/null 2>&1; then
   # Check if k9s is also installed
   if ! command -v k9s >/dev/null 2>&1; then
     print_info_message "k9s is not installed. Installing k9s..."
-    sudo pacman -S --needed --noconfirm k9s
+    brew_install_formula k9s
   else
     print_info_message "k9s is already installed."
   fi
@@ -59,14 +59,14 @@ fi
 # Install Minikube and kubectl
 # --------------------------
 
-# Install Minikube from official Arch repos
+# Install Minikube via Homebrew
 print_info_message "Installing Minikube"
-sudo pacman -S --needed --noconfirm minikube
+brew_install_formula minikube
 
 # Install kubectl (Kubernetes CLI) if not already installed
 if ! command -v kubectl >/dev/null 2>&1; then
   print_info_message "Installing kubectl"
-  sudo pacman -S --needed --noconfirm kubectl
+  brew_install_formula kubectl
 else
   print_info_message "kubectl is already installed."
 fi
@@ -74,7 +74,7 @@ fi
 # Install k9s (Kubernetes terminal UI) if not already installed
 if ! command -v k9s >/dev/null 2>&1; then
   print_info_message "Installing k9s"
-  sudo pacman -S --needed --noconfirm k9s
+  brew_install_formula k9s
 else
   print_info_message "k9s is already installed."
 fi
@@ -109,8 +109,10 @@ print_info_message "  3. Access dashboard: minikube dashboard"
 print_info_message "  4. Manage cluster with k9s: k9s"
 print_info_message "  5. Stop Minikube: minikube stop"
 echo ""
-print_info_message "Minikube will use Docker as the default driver if available."
-print_info_message "You can specify a different driver with: minikube start --driver=<driver>"
+print_info_message "On macOS, Minikube will use Docker Desktop as the default driver."
+print_info_message "Make sure Docker Desktop is installed and running before starting Minikube."
+print_info_message "Alternative drivers: hyperkit, virtualbox, parallels, vmware"
+print_info_message "Specify a driver with: minikube start --driver=<driver>"
 echo ""
 
 print_tool_setup_complete "Minikube"

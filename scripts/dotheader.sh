@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # --------------------------
-# Common Header for Arch Setup Scripts
+# Common Header for macOS Setup Scripts
 # --------------------------
 # This file sets up common variables and sources the function library
 # It should be sourced at the beginning of each setup script
@@ -23,6 +23,12 @@ else
   echo "Missing required library: $DF_SCRIPT_DIR/fn-lib.sh"
   echo "DF_SCRIPT_DIR is $DF_SCRIPT_DIR"
   echo "Current user: $(whoami)"
-  echo "Real user: ${SUDO_USER:-$(whoami)}" 
+  echo "Real user: ${SUDO_USER:-$(whoami)}"
   exit 1
+fi
+
+# Source Homebrew library functions
+if [ -r "$DF_SCRIPT_DIR/brew-lib.sh" ]; then
+  # shellcheck source=/dev/null
+  source "$DF_SCRIPT_DIR/brew-lib.sh"
 fi

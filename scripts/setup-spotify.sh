@@ -45,7 +45,7 @@ else
     print_info_message "Installing Spotify from AUR"
 
     # Install Spotify from AUR
-    yay -S --noconfirm --needed spotify
+    brew_install_cask spotify
 
     if command -v spotify &> /dev/null; then
         print_info_message "Spotify installed successfully"

@@ -1,17 +1,14 @@
 #!/bin/bash
-
 # --------------------------
-# Setup Nerd Fonts for Arch Linux
-# --------------------------
-
-# --------------------------
-# Import Common Header 
+# Setup Nerd Fonts via Homebrew Cask
 # --------------------------
 
-# add header file
+# --------------------------
+# Import Common Header
+# --------------------------
+
 CURRENT_FILE_DIR="$(cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd)"
 
-# source header (uses SCRIPT_DIR and loads lib.sh)
 if [ -r "$CURRENT_FILE_DIR/dotheader.sh" ]; then
   # shellcheck source=/dev/null
   source "$CURRENT_FILE_DIR/dotheader.sh"
@@ -21,63 +18,30 @@ else
 fi
 
 # --------------------------
-# End Import Common Header 
+# Install Nerd Fonts
 # --------------------------
 
-print_tool_setup_start "Fonts"
+print_tool_setup_start "Nerd Fonts"
 
-# --------------------------
-# Install Nerd Fonts via AUR
-# --------------------------
+# Tap the Homebrew cask-fonts repository if not already tapped
+brew_tap_if_needed homebrew/cask-fonts
 
-# Map font names to AUR package names
-# Update this associative array to install different fonts if desired
-declare -A NERD_FONTS=(
-    ["Meslo"]="ttf-meslo-nerd"
-    ["Ubuntu"]="ttf-ubuntu-nerd"
-    ["FiraCode"]="ttf-firacode-nerd"
-    ["JetBrainsMono"]="ttf-jetbrains-mono-nerd"
-    ["Hack"]="ttf-hack-nerd"
+# Nerd Fonts to install (same as original Arch setup)
+NERD_FONTS=(
+    font-meslo-lg-nerd-font
+    font-ubuntu-nerd-font
+    font-fira-code-nerd-font
+    font-jetbrains-mono-nerd-font
+    font-hack-nerd-font
 )
 
-print_info_message "Installing Nerd Fonts from official Arch repositories"
+print_line_break "Installing Nerd Fonts via Homebrew Cask"
 
-# Batch check which fonts need to be installed
-FONTS_TO_INSTALL=()
-for FONT_NAME in "${!NERD_FONTS[@]}"; do
-    PACKAGE_NAME="${NERD_FONTS[$FONT_NAME]}"
-    if pacman -Q "$PACKAGE_NAME" &> /dev/null; then
-        print_info_message "$FONT_NAME Nerd Font already installed"
-    else
-        FONTS_TO_INSTALL+=("$PACKAGE_NAME")
-    fi
-done
+# Install each font cask
+brew_install_casks "${NERD_FONTS[@]}"
 
-# Batch install all missing fonts
-FONTS_UPDATED=false
-if [ ${#FONTS_TO_INSTALL[@]} -gt 0 ]; then
-    print_info_message "Installing ${#FONTS_TO_INSTALL[@]} font package(s): ${FONTS_TO_INSTALL[*]}"
-    if sudo pacman -S --needed --noconfirm "${FONTS_TO_INSTALL[@]}"; then
-        print_success_message "Fonts installed successfully"
-        FONTS_UPDATED=true
-    else
-        print_error_message "Some fonts failed to install"
-    fi
-else
-    print_info_message "All Nerd Fonts are already installed"
-fi
+print_success_message "Nerd Fonts installed successfully!"
+print_info_message "Fonts are automatically available to all applications on macOS"
+print_info_message "No font cache refresh needed"
 
-# --------------------------
-# Refresh Font Cache
-# --------------------------
-
-# Refresh font cache if new fonts were installed
-if [ "$FONTS_UPDATED" = true ]; then
-    print_info_message "Fonts were installed. Refreshing font cache."
-    fc-cache -f # add -v for verbose output
-    print_info_message "Font cache refreshed successfully"
-else
-    print_info_message "No new fonts were installed. Skipping font cache refresh."
-fi
-
-print_tool_setup_complete "Fonts"
+print_tool_setup_complete "Nerd Fonts"

@@ -44,7 +44,7 @@ else
     print_info_message "Installing Obsidian from AUR"
 
     # Install Obsidian from AUR
-    yay -S --noconfirm --needed obsidian
+    brew_install_cask obsidian
 
     if command -v obsidian &> /dev/null; then
         print_info_message "Obsidian installed successfully"

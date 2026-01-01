@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # -------------------------
-# GitHub CLI and Copilot CLI Setup for Arch Linux
+# GitHub CLI and Copilot CLI Setup for macOS
 # -------------------------
 
 
@@ -38,8 +38,8 @@ if command -v gh &> /dev/null; then
 else
     print_action_message "Installing GitHub CLI (gh)..."
 
-    sudo pacman -S --needed --noconfirm github-cli
-    
+    brew_install_formula gh
+
     if command -v gh &> /dev/null; then
         print_success_message "GitHub CLI installed successfully!"
         gh --version

@@ -41,23 +41,7 @@ if [ ${#MISSING_DEPS[@]} -gt 0 ]; then
     print_info_message "Installing missing dependencies: ${MISSING_DEPS[*]}"
 
     for dep in "${MISSING_DEPS[@]}"; do
-        case "$dep" in
-            tmux)
-                sudo pacman -S --needed --noconfirm tmux
-                ;;
-            lazygit)
-                sudo pacman -S --needed --noconfirm lazygit
-                ;;
-            tmuxinator)
-                yay -S --needed --noconfirm tmuxinator
-                ;;
-            lazydocker)
-                yay -S --needed --noconfirm laxydocker
-                ;;
-            mycli)
-                yay -S --needed --noconfirm mycli
-                ;;
-        esac
+        brew_install_formula "$dep"
 
         if command -v "$dep" &> /dev/null; then
             print_success_message "$dep installed successfully"
@@ -86,7 +70,7 @@ fi
 # --------------------------
 
 DOTFILES_DIR="$(cd "$CURRENT_FILE_DIR/.." && pwd)"
-CODE_SCRIPT="$DOTFILES_DIR/home/.local/bin/code"
+CODE_SCRIPT="$DOTFILES_DIR/stow/dotfiles/.local/bin/code"
 
 if [ -f "$CODE_SCRIPT" ]; then
     chmod +x "$CODE_SCRIPT"

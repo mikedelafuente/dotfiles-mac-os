@@ -1,11 +1,11 @@
 #!/bin/bash
 
 # --------------------------
-# Setup Docker for Arch Linux
+# Setup Docker for macOS
 # --------------------------
 
 # --------------------------
-# Import Common Header 
+# Import Common Header
 # --------------------------
 
 # add header file
@@ -21,7 +21,7 @@ else
 fi
 
 # --------------------------
-# End Import Common Header 
+# End Import Common Header
 # --------------------------
 
 print_tool_setup_start "Docker"
@@ -30,96 +30,51 @@ print_tool_setup_start "Docker"
 # Check if Docker is Already Installed
 # --------------------------
 
-# Check to see if Docker is already installed and working
-if command -v docker >/dev/null 2>&1 && docker --version >/dev/null 2>&1; then
-  print_info_message "Docker is already installed and working."
+# Check if Docker Desktop is installed
+if [ -d "/Applications/Docker.app" ] && command -v docker &> /dev/null; then
+  print_info_message "Docker Desktop is already installed."
 
-  # Ensure user is in docker group
-  if [ -n "${SUDO_USER-}" ]; then
-    TARGET_USER="$SUDO_USER"
+  # Check if Docker daemon is running
+  if docker info &> /dev/null; then
+    print_success_message "Docker is installed and running."
+    docker --version
+    print_tool_setup_complete "Docker"
+    exit 0
   else
-    TARGET_USER="$USER"
+    print_warning_message "Docker Desktop is installed but not running."
+    print_info_message "Please launch Docker Desktop from Applications folder."
+    exit 0
   fi
-
-  if ! groups "$TARGET_USER" | grep -q docker; then
-    print_info_message "Adding user '$TARGET_USER' to docker group"
-    sudo usermod -aG docker "$TARGET_USER"
-    print_warning_message "You need to log out and log back in for group changes to take effect"
-  fi
-
-  print_tool_setup_complete "Docker"
-  exit 0
 fi
 
 # --------------------------
-# Remove Old Docker Versions (Only if Installing)
+# Install Docker Desktop
 # --------------------------
 
-# Uninstall old incompatible packages if they exist
-OLD_PACKAGES=()
-for pkg in docker-compose podman podman-docker; do
-  if pacman -Q "$pkg" &> /dev/null; then
-    OLD_PACKAGES+=("$pkg")
-  fi
-done
-
-if [ ${#OLD_PACKAGES[@]} -gt 0 ]; then
-  print_info_message "Removing old/conflicting packages: ${OLD_PACKAGES[*]}"
-  sudo pacman -R --noconfirm "${OLD_PACKAGES[@]}"
-fi
-
-# --------------------------
-# Install Docker Packages
-# --------------------------
-
-# Install Docker Engine and related packages from official Arch repos
-print_info_message "Installing Docker Engine, CLI, and plugins"
-sudo pacman -S --needed --noconfirm docker docker-compose docker-buildx
-# --------------------------
-# Configure and Start Docker Service
-# --------------------------
-
-# Start and enable Docker service
-print_info_message "Starting and enabling Docker service"
-sudo systemctl start docker
-sudo systemctl enable --now docker
-
-# --------------------------
-# Add User to Docker Group
-# --------------------------
-
-# Add original user (when run with sudo) or current user to the docker group
-if [ -n "${SUDO_USER-}" ]; then
-  TARGET_USER="$SUDO_USER"
-else
-  TARGET_USER="$USER"
-fi
-
-print_info_message "Adding user '$TARGET_USER' to docker group"
-sudo usermod -aG docker "$TARGET_USER"
+print_info_message "Installing Docker Desktop via Homebrew Cask"
+brew_install_cask docker
 
 # --------------------------
 # Install Lazy Docker
 # --------------------------
 
-if ! command -v lazydocker &> /dev/null; then
-    print_info_message "Installing lazydocker from official repos"
-    sudo pacman -S --needed --noconfirm lazydocker
-else
-    print_info_message "lazydocker is already installed. Skipping installation."
-fi
-
+print_info_message "Installing lazydocker via Homebrew"
+brew_install_formula lazydocker
 
 # --------------------------
 # Installation Complete
 # --------------------------
 
 echo ""
-print_info_message "Docker installation completed successfully!"
-docker --version
+print_success_message "Docker Desktop installation completed!"
 echo ""
-print_warning_message "IMPORTANT: To apply the new group membership, please log out and log back in,"
-print_warning_message "or restart your terminal session. You may also need to restart your system."
+print_warning_message "IMPORTANT: Next steps to complete Docker setup:"
+print_info_message "  1. Launch Docker Desktop from Applications folder"
+print_info_message "  2. Grant necessary permissions in System Settings → Privacy & Security"
+print_info_message "  3. Wait for Docker daemon to start (whale icon appears in menu bar)"
+print_info_message "  4. Docker commands will then work in terminal"
+echo ""
+print_info_message "After Docker Desktop starts, verify with: docker --version"
 echo ""
 
 print_tool_setup_complete "Docker"

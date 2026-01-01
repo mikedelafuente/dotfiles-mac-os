@@ -36,10 +36,10 @@ print_tool_setup_start "TablePlus"
 if command -v tableplus &> /dev/null; then
     print_info_message "TablePlus is already installed."
 else
-    print_info_message "Installing TablePlus from AUR via yay"
+    print_info_message "Installing TablePlus via Homebrew Cask"
 
-    # Install TablePlus from AUR
-    yay -S --needed --noconfirm tableplus
+    # Install TablePlus from Homebrew
+    brew_install_cask tableplus
 
     print_info_message "TablePlus installation completed."
 fi

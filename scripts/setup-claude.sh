@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # --------------------------
-# Setup Claude Code CLI for Arch Linux
+# Setup Claude Code CLI for macOS
 # --------------------------
 
 # --------------------------
@@ -24,20 +24,50 @@ fi
 # End Import Common Header 
 # --------------------------
 
+print_tool_setup_start "Claude Code CLI"
+
 # --------------------------
-# Setup Claude Code
+# Install Claude Code via npm
 # --------------------------
+
+# Check if npm is installed
+if ! command -v npm &> /dev/null; then
+    print_error_message "npm is not installed. Please run setup-node.sh first."
+    exit 1
+fi
 
 # Install Claude Code via npm
 if ! command -v claude-code &> /dev/null; then
-    print_info_message "Installing Claude Code..."
+    print_action_message "Installing Claude Code CLI..."
     sudo npm install -g @anthropic-ai/claude-code
+
+    if command -v claude-code &> /dev/null; then
+        print_success_message "Claude Code CLI installed successfully!"
+        claude-code --version
+    else
+        print_error_message "Failed to install Claude Code CLI"
+        exit 1
+    fi
 else
-    print_info_message "Claude Code is already installed."
-fi 
+    print_info_message "Claude Code CLI is already installed."
+    claude-code --version
+fi
 
 # --------------------------
-# Complete Claude Code Setup
+# Setup Instructions
 # --------------------------
+
+print_info_message ""
+print_info_message "Claude Code CLI installation complete!"
+print_info_message ""
+print_info_message "Next steps:"
+print_info_message "  1. Authenticate with your Anthropic API key:"
+print_info_message "     claude-code auth"
+print_info_message ""
+print_info_message "  2. Start using Claude Code:"
+print_info_message "     claude-code [directory]"
+print_info_message ""
+
+print_tool_setup_complete "Claude Code CLI"
 
 

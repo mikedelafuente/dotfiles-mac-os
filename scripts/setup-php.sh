@@ -35,7 +35,7 @@ if command -v php &> /dev/null; then
     print_info_message "PHP is already installed. Skipping installation."
 else
     print_info_message "Installing PHP and common extensions"
-    sudo pacman -S --needed --noconfirm php php-gd php-intl php-sqlite php-pgsql
+    brew_install_formula php
 
     # Verify installation
     if command -v php &> /dev/null; then
@@ -58,7 +58,7 @@ if command -v composer &> /dev/null; then
     print_info_message "Composer version: $(composer --version)"
 else
     print_info_message "Installing Composer"
-    sudo pacman -S --needed --noconfirm composer
+    brew_install_formula composer
 
     if command -v composer &> /dev/null; then
         print_info_message "Composer installed successfully."

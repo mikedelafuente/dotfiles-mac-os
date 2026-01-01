@@ -30,10 +30,10 @@ print_tool_setup_start "Kitty"
 # Install Kitty
 # --------------------------
 
-# Install Kitty using pacman
+# Install Kitty using Homebrew Cask
 if ! command -v kitty &> /dev/null; then
-    print_info_message "Installing Kitty via pacman"
-    sudo pacman -S --needed --noconfirm kitty
+    print_info_message "Installing Kitty via Homebrew Cask"
+    brew_install_cask kitty
 else
     print_info_message "Kitty is already installed. Skipping installation."
 fi
@@ -61,58 +61,19 @@ else
 fi
 
 # --------------------------
-# Set Default Terminal for All Available Desktop Environments
+# macOS Configuration Notes
 # --------------------------
 
-# Get the path to Kitty
-kitty_path=$(which kitty)
-
-print_info_message "Kitty path: $kitty_path"
-
-# Configure for all available desktop environments (user switches between them)
-print_info_message "Configuring Kitty as default terminal for all available environments..."
-
-# Configure KDE Plasma (if available)
-if command -v kwriteconfig5 &> /dev/null || command -v kwriteconfig6 &> /dev/null; then
-    print_info_message "Configuring Kitty as default terminal for KDE"
-
-    # Determine which version of kwriteconfig is available (KDE 5 or KDE 6)
-    if command -v kwriteconfig6 &> /dev/null; then
-        KWRITECONFIG="kwriteconfig6"
-    else
-        KWRITECONFIG="kwriteconfig5"
-    fi
-
-    # Set Kitty as the default terminal in KDE settings
-    $KWRITECONFIG --file kdeglobals --group General --key TerminalApplication kitty
-    $KWRITECONFIG --file kdeglobals --group General --key TerminalService ""
-
-    print_info_message "✓ KDE configured"
-else
-    print_info_message "KDE configuration tools not found. Skipping KDE setup."
-fi
-
-# Configure Gnome (if gsettings is available)
-if command -v gsettings &> /dev/null; then
-    print_info_message "Configuring Kitty as default terminal for Gnome"
-
-    # Set Kitty as the default terminal in Gnome settings
-    # This will work even if not currently in a Gnome session
-    gsettings set org.gnome.desktop.default-applications.terminal exec 'kitty'
-    gsettings set org.gnome.desktop.default-applications.terminal exec-arg ''
-
-    print_info_message "✓ Gnome configured"
-else
-    print_info_message "gsettings not found. Skipping Gnome setup."
-fi
-
-# Hyprland configuration reminder
 print_info_message ""
-print_info_message "For Hyprland, make sure your hyprland.conf includes:"
-print_info_message "  bind = \$mainMod, Return, exec, kitty"
-print_info_message "  or"
-print_info_message "  \$terminal = kitty"
-print_info_message "  bind = \$mainMod, Return, exec, \$terminal"
+print_info_message "Kitty installed successfully!"
+print_info_message ""
+print_info_message "To use Kitty as your default terminal:"
+print_info_message "  1. Launch Kitty from Applications folder"
+print_info_message "  2. Set it as default in Terminal app preferences if desired"
+print_info_message "  3. Or simply use Spotlight/Raycast to launch Kitty directly"
+print_info_message ""
+print_info_message "Kitty configuration is managed by dotfiles at:"
+print_info_message "  ~/.config/kitty/kitty.conf"
 
 print_tool_setup_complete "Kitty"
 

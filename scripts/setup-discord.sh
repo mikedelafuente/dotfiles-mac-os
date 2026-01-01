@@ -40,7 +40,7 @@ else
     print_info_message "Installing Discord from AUR"
 
     # Install Discord from AUR
-    yay -S --noconfirm --needed discord
+    brew_install_cask discord
 
     if command -v discord &> /dev/null; then
         print_info_message "Discord installed successfully"

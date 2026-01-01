@@ -1,6 +1,6 @@
 #!/bin/bash
 # ----------------
-# Bootstrap Script for Arch
+# Bootstrap Script for macOS
 # ----------------
 #
 # Determine if we are running with sudo, and if so get the actual user's home directory
@@ -11,7 +11,7 @@ else
 fi
 
 # Make a bootstrap config folder
-BOOTSTRAP_CONFIG_DIR="$USER_HOME_DIR/.config/dotfiles-arch"
+BOOTSTRAP_CONFIG_DIR="$USER_HOME_DIR/.config/dotfiles-mac-os"
 mkdir -p "$BOOTSTRAP_CONFIG_DIR"
 
 # Read in configuration from file if it exists
@@ -19,8 +19,8 @@ if [ -r "$BOOTSTRAP_CONFIG_DIR/.dotfiles_bootstrap_config" ]; then
   # shellcheck source=/dev/null
   source "$BOOTSTRAP_CONFIG_DIR/.dotfiles_bootstrap_config"
 else
-  echo "Configuration file not found. Setting based on System User."
-  FULL_NAME=""$(getent passwd "$(whoami)" | cut -d ':' -f 5 | cut -d ',' -f 1)""
+  echo "Configuration file not found."
+  FULL_NAME=""
 fi
 
 # Prompt for full name
@@ -67,11 +67,12 @@ fi
 # --------------------------
 
 echo "Starting bootstrap process... pwd is $(pwd)"
-echo "Display server protocol: $XDG_SESSION_TYPE"
+echo "macOS Version: $(sw_vers -productVersion)"
+echo "Architecture: $(uname -m)"
 echo "Current user: $(whoami)"
 echo "Home directory: $HOME"
 echo "Real user: ${SUDO_USER:-$(whoami)}"
-echo "Home directory of real user: $(eval echo ~${SUDO_USER:-$(whoami)})" 
+echo "Home directory of real user: $(eval echo ~${SUDO_USER:-$(whoami)})"
 echo "Shell: $SHELL"
 echo "Script directory: $(dirname -- "${BASH_SOURCE[0]}")"
 echo "----------------------------------------"
@@ -122,100 +123,18 @@ fi
 DF_SCRIPT_DIR="$CURRENT_FILE_DIR"
 
 # --------------------------
-# Allow multilib in pacman
+# Ensure Homebrew is Installed
 # --------------------------
 
-PACMAN_CONF="/etc/pacman.conf"
-PACMAN_CHANGES_MADE=false
+print_line_break "Homebrew Setup"
 
-if [ ! -f "$PACMAN_CONF" ]; then
-    echo "Error: $PACMAN_CONF not found."
-    exit 1
-fi
-
-if grep -q "^\[multilib\]" "$PACMAN_CONF"; then
-    echo "[multilib] is already enabled in $PACMAN_CONF"
-else
-    if grep -q "^#\[multilib\]" "$PACMAN_CONF"; then
-        sudo sed -i '/^#\[multilib\]/{ s/^#//; n; s/^#//; }' "$PACMAN_CONF"
-        echo "[multilib] and its Include line have been uncommented in $PACMAN_CONF"
-        CHANGES_MADE=true
-    else
-        echo "[multilib] section not found in $PACMAN_CONF"
-    fi
-fi
-
-if [ "$PACMAN_CHANGES_MADE" = true ]; then
-    echo "Running pacman -Syu to update package database..."
-    sudo pacman -Syu --noconfirm
-fi
-
-# To check the display Manager
-# 
+ensure_homebrew_installed
 
 # --------------------------
-# Update System Packages
+# Update Homebrew (Rate Limited)
 # --------------------------
 
-# Update package list and upgrade installed packages
-# Check how recent the last update was
-
-LAST_PACMAN_UPDATE=$(cat "$BOOTSTRAP_CONFIG_DIR/.last_pacman_update" 2>/dev/null || echo 0)
-CURRENT_TIME=$(date +%s)
-TIME_DIFF=$((CURRENT_TIME - LAST_PACMAN_UPDATE))
-
-# If more than 1 day (86400 seconds) has passed since the last update, perform update
-if [ "$TIME_DIFF" -lt 86400 ] && [ "$PACMAN_CHANGES_MADE" = false ]; then
-    print_info_message "Last Pacman update was less than a day ago. Skipping update."
-else
-    print_info_message "Last Pacman update was more than a day ago or changes to pacman.conf was made. Performing update."
-    sudo pacman -Sy --noconfirm #|| true
-    # Write a file to ~/.last_pacman_update with the current timestamp
-    echo "$(date +%s)" > "$BOOTSTRAP_CONFIG_DIR/.last_pacman_update"
-fi
-
-LAST_PACMAN_UPGRADE=$(cat "$BOOTSTRAP_CONFIG_DIR/.last_pacman_upgrade" 2>/dev/null || echo 0)
-CURRENT_TIME=$(date +%s)
-TIME_DIFF=$((CURRENT_TIME - LAST_PACMAN_UPGRADE))
-
-# If more than 1 day (86400 seconds) has passed since the last upgrade, perform upgrade
-if [ "$TIME_DIFF" -lt 86400 ]; then
-    print_info_message "Last Pacman upgrade was less than a day ago. Skipping upgrade."
-else
-    print_info_message "Last Pacman upgrade was more than a day ago. Performing upgrade."
-    sudo pacman -Su --noconfirm
-    # Write a file to ~/.last_pacman_upgrade with the current timestamp
-    echo "$(date +%s)" > "$BOOTSTRAP_CONFIG_DIR/.last_pacman_upgrade"
-fi
-
-
-# Ensure yay is installed
-{
-	if ! command -v yay &> /dev/null; then
-		echo "Installing yay"
-		cd "$USER_HOME_DIR" || exit 1
-		git clone https://aur.archlinux.org/yay.git
-		cd yay || exit 1
-		sudo pacman -S --needed --noconfirm base-devel
-		makepkg -si --noconfirm
-		cd "$USER_HOME_DIR" || exit 1
-		rm -rf yay
-	fi
-}
-
-# Update Flatpak apps if they have not been updated in the last day
-LAST_YAY_UPDATE=$(cat "$BOOTSTRAP_CONFIG_DIR/.last_yay_update" 2>/dev/null || echo 0)
-CURRENT_TIME=$(date +%s)
-TIME_DIFF=$((CURRENT_TIME - LAST_YAY_UPDATE)) 
-
-if [ "$TIME_DIFF" -lt 86400 ]; then
-    print_info_message "Last Yay update was less than a day ago. Skipping update."
-else
-    print_info_message "Last Yay update was more than a day ago. Performing update."
-    # Write a file to ~/.last_flatpak_update with the current timestamp
-    echo "$(date +%s)" > "$BOOTSTRAP_CONFIG_DIR/.last_yay_update"
-    yay -Syu --noconfirm
-fi
+brew_update_if_stale
 
 # --------------------------
 # Run Individual Setup Scripts
@@ -239,9 +158,6 @@ bash "$DF_SCRIPT_DIR/setup-node.sh"
 
 # Setup Python
 bash "$DF_SCRIPT_DIR/setup-python.sh"
-
-# Setup Fonts
-bash "$DF_SCRIPT_DIR/setup-fonts.sh"
 
 # Setup Bash
 bash "$DF_SCRIPT_DIR/setup-bash.sh"
@@ -300,42 +216,31 @@ bash "$DF_SCRIPT_DIR/setup-obsidian.sh"
 # Install Zoom
 bash "$DF_SCRIPT_DIR/setup-zoom.sh"
 
-# Setup GNOME with Catppuccin theme (if GNOME is installed)
-if pacman -Q gnome-shell &> /dev/null; then
-    print_info_message "GNOME is installed. Running GNOME setup..."
-    bash "$DF_SCRIPT_DIR/setup-gnome.sh"
-else
-    print_info_message "GNOME is not installed. Skipping GNOME setup."
-fi
+# Setup Nerd Fonts (Homebrew cask-fonts)
+bash "$DF_SCRIPT_DIR/setup-fonts.sh"
 
-# Setup Hyprland UI (if Hyprland is installed)
-if pacman -Q hyprland &> /dev/null; then
-    print_info_message "Hyprland is installed. Running Hyprland setup..."
-    bash "$DF_SCRIPT_DIR/setup-hyprland.sh"
-else
-    print_info_message "Hyprland is not installed. Skipping Hyprland setup."
-fi
+# Setup macOS-specific productivity tools
+bash "$DF_SCRIPT_DIR/setup-rectangle.sh"
+bash "$DF_SCRIPT_DIR/setup-raycast.sh"
+bash "$DF_SCRIPT_DIR/setup-karabiner.sh"
 
-# Link dotfiles
-bash "$DF_SCRIPT_DIR/link-dotfiles.sh"
+# Link dotfiles using GNU Stow
+bash "$DF_SCRIPT_DIR/stow-dotfiles.sh" link
 
 # --------------------------
 # Clean Up
 # --------------------------
 
-print_line_break "Cleaning up"
+print_line_break "Cleaning up Homebrew"
 
-ORPHANED_PACKAGES=$(pacman -Qtdq)
-if [ -n "$ORPHANED_PACKAGES" ]; then
-    # The variable is not empty, meaning there are orphaned packages.
-    echo "Found orphaned packages. Removing them now..."
-    sudo pacman -Rns --noconfirm $ORPHANED_PACKAGES
-else
-    # The variable is empty, meaning there are no orphaned packages.
-    echo "No orphaned packages found."
-fi
+brew_cleanup
 
-print_line_break "Bootstrap completed. Please restart your terminal or log out and log back in."
+print_line_break "Bootstrap completed!"
 
-echo "Shell: $SHELL"
+print_success_message "Setup is complete. Please restart your terminal to apply all changes."
+print_info_message "Shell: $SHELL"
+print_info_message "Next steps:"
+print_info_message "  1. Restart your terminal"
+print_info_message "  2. Verify Homebrew: brew doctor"
+print_info_message "  3. Check dotfiles: ls -la ~/ | grep '^l'"
 

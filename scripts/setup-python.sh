@@ -1,7 +1,11 @@
 #!/bin/bash
 
 # --------------------------
-# Import Common Header 
+# Setup Python for macOS
+# --------------------------
+
+# --------------------------
+# Import Common Header
 # --------------------------
 
 # add header file
@@ -17,7 +21,7 @@ else
 fi
 
 # --------------------------
-# End Import Common Header 
+# End Import Common Header
 # --------------------------
 
 print_tool_setup_start "Python"
@@ -26,26 +30,16 @@ print_tool_setup_start "Python"
 # Install Python
 # --------------------------
 
-# Check if Python is already installed
-if command -v python3 &> /dev/null; then
-    print_info_message "Python is already installed. Skipping installation."
-else
-    print_info_message "Installing Python from official Arch repositories"
+# Install Python 3 via Homebrew (macOS includes an old version)
+print_info_message "Installing Python 3 via Homebrew"
+brew_install_formula python@3.12
 
-    # Install Python
-    sudo pacman -S --needed --noconfirm python
-fi
-
-# Print Python version
+# Python 3 from Homebrew includes pip automatically
 print_info_message "Python version: $(python3 --version)"
+print_info_message "pip version: $(pip3 --version)"
 
-# Install pip if not already installed
-if command -v pip3 &> /dev/null; then
-    print_info_message "pip is already installed. Skipping installation."
-else
-    print_info_message "Installing pip for Python"
-    sudo pacman -S --needed --noconfirm python-pip
-fi
+print_success_message "Python 3 and pip installed successfully!"
+print_info_message "Python and pip are available as 'python3' and 'pip3'"
 
 print_tool_setup_complete "Python"
 

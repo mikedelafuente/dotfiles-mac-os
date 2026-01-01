@@ -41,7 +41,7 @@ else
     print_info_message "Installing Zoom from AUR"
 
     # Install Zoom from AUR
-    yay -S --noconfirm --needed zoom
+    brew_install_cask zoom
 
     if command -v zoom &> /dev/null; then
         print_info_message "Zoom installed successfully"

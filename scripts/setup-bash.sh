@@ -1,11 +1,11 @@
 #!/bin/bash
 
 # --------------------------
-# Setup Bash Shell for Arch Linux
+# Setup Bash Shell for macOS
 # --------------------------
 
 # --------------------------
-# Import Common Header 
+# Import Common Header
 # --------------------------
 
 # add header file
@@ -21,7 +21,7 @@ else
 fi
 
 # --------------------------
-# End Import Common Header 
+# End Import Common Header
 # --------------------------
 
 print_tool_setup_start "Bash"
@@ -30,25 +30,31 @@ print_tool_setup_start "Bash"
 # Install Bash
 # --------------------------
 
-# Install Bash if not already installed (usually pre-installed on Arch)
-if ! command -v bash &> /dev/null; then
-    print_info_message "Installing Bash via pacman"
-    sudo pacman -S --needed --noconfirm bash
+# Install latest Bash via Homebrew (macOS includes an old version)
+if ! brew list bash &> /dev/null; then
+    print_info_message "Installing latest Bash via Homebrew"
+    brew_install_formula bash
 else
-    print_info_message "Bash is already installed. Skipping installation."
+    print_info_message "Bash is already installed via Homebrew. Skipping installation."
 fi
 
 # --------------------------
 # Set Bash as Default Shell
 # --------------------------
 
-# Set Bash as the default shell
-if [ "$SHELL" != "$(which bash)" ]; then
-    current_shell=$(which bash)
-    print_info_message "Changing default shell ($SHELL) to bash ($current_shell)"
-    chsh -s "$current_shell"
+# Add Homebrew bash to allowed shells if not already present
+BREW_BASH="/opt/homebrew/bin/bash"
+if ! grep -q "$BREW_BASH" /etc/shells; then
+    print_info_message "Adding Homebrew Bash to /etc/shells"
+    echo "$BREW_BASH" | sudo tee -a /etc/shells > /dev/null
+fi
+
+# Set Homebrew Bash as the default shell
+if [ "$SHELL" != "$BREW_BASH" ]; then
+    print_info_message "Changing default shell to Homebrew Bash ($BREW_BASH)"
+    chsh -s "$BREW_BASH"
 else
-    print_info_message "Bash is already the default shell. Skipping change."
+    print_info_message "Homebrew Bash is already the default shell."
 fi
 
 # --------------------------
@@ -57,10 +63,10 @@ fi
 
 # Install Starship prompt for Bash
 if ! command -v starship &> /dev/null; then
-    print_info_message "Installing Starship prompt for Bash via pacman"
-    sudo pacman -S --needed --noconfirm starship
+    print_info_message "Installing Starship prompt via Homebrew"
+    brew_install_formula starship
 else
-    print_info_message "Starship prompt is already installed. Skipping installation."
+    print_info_message "Starship prompt is already installed."
 fi
 
 print_tool_setup_complete "Bash"

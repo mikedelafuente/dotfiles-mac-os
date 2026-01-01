@@ -42,8 +42,8 @@ print_tool_setup_start "Postman"
 if command -v postman &> /dev/null; then
     print_info_message "Postman is already installed. Skipping installation."
 else
-    print_info_message "Installing Postman from AUR (postman-bin)"
-    yay -S --noconfirm --needed postman-bin
+    print_info_message "Installing Postman via Homebrew Cask"
+    brew_install_cask postman
 
     # Verify installation
     if command -v postman &> /dev/null; then

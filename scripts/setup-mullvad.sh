@@ -32,11 +32,10 @@ print_tool_setup_start "Mullvad VPN"
 
 # Install Mullvad VPN if not already installed
 if ! command -v mullvad &> /dev/null; then
-    print_info_message "Installing Mullvad VPN from AUR via yay"
+    print_info_message "Installing Mullvad VPN via Homebrew Cask"
 
-    # Install the Mullvad VPN package from AUR
-    # Using mullvad-vpn-bin for faster installation (pre-compiled binary)
-    yay -S --needed --noconfirm mullvad-vpn-bin
+    # Install the Mullvad VPN package from Homebrew
+    brew_install_cask mullvadvpn
 
     print_info_message "Mullvad VPN installed successfully"
 else

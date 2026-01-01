@@ -31,7 +31,7 @@ if command -v ruby &> /dev/null; then
     print_info_message "Ruby is already installed: $(ruby --version)"
 else
     print_info_message "Installing Ruby from official Arch repositories"
-    sudo pacman -S --needed --noconfirm ruby
+    brew_install_formula ruby
     print_info_message "Ruby installed: $(ruby --version)"
 fi
 
@@ -75,24 +75,21 @@ if command -v node &> /dev/null; then
     print_info_message "Node.js is already installed: $(node --version)"
 else
     print_info_message "Installing Node.js"
-    sudo pacman -S --needed --noconfirm nodejs npm
+    brew_install_formula node
 fi
 
-# Additional build dependencies for native gems
-if pacman -Q base-devel &> /dev/null; then
-    print_info_message "Build dependencies already installed"
+# Additional build dependencies for native gems (Xcode Command Line Tools on macOS)
+if ! xcode-select -p &> /dev/null; then
+    print_info_message "Installing Xcode Command Line Tools for native gem compilation"
+    xcode-select --install
+    print_warning_message "Please complete the Xcode Command Line Tools installation when prompted"
 else
-    print_info_message "Installing build dependencies for Ruby gems"
-    sudo pacman -S --needed --noconfirm base-devel
+    print_info_message "Xcode Command Line Tools already installed"
 fi
 
 # SQLite (default Rails database for development)
-if pacman -Q sqlite &> /dev/null; then
-    print_info_message "SQLite is already installed"
-else
-    print_info_message "Installing SQLite"
-    sudo pacman -S --needed --noconfirm sqlite
-fi
+print_info_message "Installing SQLite via Homebrew"
+brew_install_formula sqlite
 
 # --------------------------
 # Install Rails
