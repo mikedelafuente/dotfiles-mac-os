@@ -88,6 +88,5 @@ print_line_break "Setup Complete"
 print_info_message "The 'code' command will be available after linking dotfiles"
 print_info_message "Usage: code [directory]"
 print_info_message "Configuration: ~/.config/tmuxinator/code.yml"
-print_info_message "See also: ~/.config/code/README.md for customization guide"
 
 print_tool_setup_complete "Code Command"
