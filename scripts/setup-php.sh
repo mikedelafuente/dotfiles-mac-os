@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # --------------------------
-# Setup PHP for Arch Linux
+# Setup PHP for macOS
 # --------------------------
 
 # --------------------------
@@ -69,30 +69,21 @@ else
 fi
 
 # --------------------------
-# Configure /etc/php/php.ini
+# PHP Configuration on macOS
 # --------------------------
 
-print_info_message "Configuring PHP extensions in /etc/php/php.ini"
+# On macOS, Homebrew PHP comes with most common extensions compiled in
+# If you need to customize PHP settings, the configuration file is located at:
+# /opt/homebrew/etc/php/<version>/php.ini
 
-PHP_INI="/etc/php/php.ini"
-if [ -f "$PHP_INI" ]; then
-    # Extensions to enable
-    EXTENSIONS=(
-        "curl"
-        "iconv"
-        "mysqli"
-        "pdo_mysql"
-        "pdo_sqlite"
-        "sqlite3"
-    )
+PHP_VERSION=$(php -r "echo PHP_MAJOR_VERSION.'.'.PHP_MINOR_VERSION;")
+PHP_INI_PATH="/opt/homebrew/etc/php/${PHP_VERSION}/php.ini"
 
-    for ext in "${EXTENSIONS[@]}"; do
-        # Uncomment the extension line
-        sudo sed -i "/^;extension=${ext}/s/^;//" "$PHP_INI" || true
-    done
-    print_success_message "PHP extensions configured"
+if [ -f "$PHP_INI_PATH" ]; then
+    print_info_message "PHP configuration file: $PHP_INI_PATH"
+    print_info_message "Most common extensions are already enabled by default"
 else
-    print_warning_message "PHP configuration file not found: $PHP_INI"
+    print_warning_message "PHP configuration file not found at expected location"
 fi
 
 # --------------------------

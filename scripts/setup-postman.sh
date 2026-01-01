@@ -1,14 +1,14 @@
 #!/bin/bash
 
 # --------------------------
-# Setup Postman for Arch Linux
+# Setup Postman for macOS
 # --------------------------
-# Postman is installed from the AUR package 'postman-bin'.
-# This is the official Postman binary repackaged for Arch Linux.
+# Postman is installed via Homebrew Cask.
+# This is the official Postman application for macOS.
 #
 # This installation method:
-# - Uses the official Postman distribution from AUR
-# - Automatically handles installation, desktop entry, and updates
+# - Uses the official Postman distribution
+# - Automatically handles installation and updates
 # - Provides the full-featured version
 # --------------------------
 
@@ -48,10 +48,9 @@ else
     # Verify installation
     if command -v postman &> /dev/null; then
         print_info_message "Postman installed successfully"
-        print_info_message "You can launch Postman from your application menu or run: postman"
+        print_info_message "You can launch Postman from Applications"
     else
         print_error_message "Postman installation failed"
-        print_info_message "You can manually install with: yay -S postman-bin"
     fi
 fi
 

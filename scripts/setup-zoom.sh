@@ -1,10 +1,10 @@
 #!/bin/bash
 
 # --------------------------
-# Setup Zoom for Arch Linux
+# Setup Zoom for macOS
 # --------------------------
-# Zoom is installed from the AUR (Arch User Repository).
-# The AUR package provides the official Zoom client.
+# Zoom is installed via Homebrew Cask.
+# The cask provides the official Zoom client.
 # --------------------------
 
 # --------------------------
@@ -30,30 +30,23 @@ fi
 print_tool_setup_start "Zoom"
 
 # --------------------------
-# Install Zoom via AUR
+# Install Zoom via Homebrew Cask
 # --------------------------
 
 # Check if Zoom is already installed
 if command -v zoom &> /dev/null; then
     print_info_message "Zoom is already installed. Skipping installation."
-    print_info_message "Installed version: $(pacman -Q zoom 2>/dev/null | awk '{print $2}')"
 else
-    print_info_message "Installing Zoom from AUR"
+    print_info_message "Installing Zoom via Homebrew Cask"
 
-    # Install Zoom from AUR
+    # Install Zoom via Homebrew Cask
     brew_install_cask zoom
 
     if command -v zoom &> /dev/null; then
         print_info_message "Zoom installed successfully"
-        print_info_message "You can launch Zoom from your application menu or run: zoom"
-        echo ""
-        print_info_message "To update Zoom in the future, run:"
-        print_info_message "  yay -S zoom"
-        print_info_message "Or update all packages with:"
-        print_info_message "  yay -Syu"
+        print_info_message "You can launch Zoom from Applications"
     else
         print_error_message "Zoom installation failed"
-        print_info_message "You can manually install with: yay -S zoom"
     fi
 fi
 

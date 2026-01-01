@@ -1,11 +1,6 @@
-# This is Git's per-user configuration file.
-[user]
-	email = mike.delafuente@gmail.com
-	name = Mike de la Fuente
-[core]
-	editor = nvim
-[init]
-	defaultBranch = main
+# Git configuration for macOS
+# User name and email are configured by setup-git.sh during bootstrap
+
 [credential]
 	helper = osxkeychain
 [credential "https://github.com"]

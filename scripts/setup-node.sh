@@ -1,10 +1,10 @@
 #!/bin/bash
 
 # --------------------------
-# Setup NVM and Node.js for Arch
+# Setup NVM and Node.js for macOS
 # --------------------------
 # This script installs NVM (Node Version Manager) which is the recommended
-# way to manage Node.js versions on Arch. NVM allows easy version switching
+# way to manage Node.js versions on macOS. NVM allows easy version switching
 # and is maintained through its own update mechanism.
 # --------------------------
 
@@ -34,7 +34,7 @@ print_tool_setup_start "NVM and Node.js"
 # Install NVM (Node Version Manager)
 # --------------------------
 
-# NVM is the recommended way to install Node.js on Arch because:
+# NVM is the recommended way to install Node.js on macOS because:
 # 1. Allows multiple Node.js versions simultaneously
 # 2. Per-user installation (no sudo required for package installs)
 # 3. Easy version switching with 'nvm use'

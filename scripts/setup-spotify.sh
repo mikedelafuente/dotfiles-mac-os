@@ -1,14 +1,13 @@
 #!/bin/bash
 
 # --------------------------
-# Setup Spotify for Arch Linux
+# Setup Spotify for macOS
 # --------------------------
-# Spotify is installed from the AUR (Arch User Repository).
-# The AUR package provides:
-# - Easy updates through yay or other AUR helpers
-# - Native integration with the system
-# - Better performance without containerization overhead
-# - Standard Arch package management
+# Spotify is installed via Homebrew Cask.
+# The cask provides:
+# - Easy updates through Homebrew
+# - Native macOS integration
+# - Standard macOS application management
 # --------------------------
 
 # --------------------------
@@ -34,30 +33,23 @@ fi
 print_tool_setup_start "Spotify"
 
 # --------------------------
-# Install Spotify via AUR
+# Install Spotify via Homebrew Cask
 # --------------------------
 
 # Check if Spotify is already installed
 if command -v spotify &> /dev/null; then
     print_info_message "Spotify is already installed. Skipping installation."
-    print_info_message "Installed version: $(pacman -Q spotify 2>/dev/null | awk '{print $2}')"
 else
-    print_info_message "Installing Spotify from AUR"
+    print_info_message "Installing Spotify via Homebrew Cask"
 
-    # Install Spotify from AUR
+    # Install Spotify via Homebrew Cask
     brew_install_cask spotify
 
     if command -v spotify &> /dev/null; then
         print_info_message "Spotify installed successfully"
-        print_info_message "You can launch Spotify from your application menu or run: spotify"
-        echo ""
-        print_info_message "To update Spotify in the future, run:"
-        print_info_message "  yay -S spotify"
-        print_info_message "Or update all packages with:"
-        print_info_message "  yay -Syu"
+        print_info_message "You can launch Spotify from Applications"
     else
         print_error_message "Spotify installation failed"
-        print_info_message "You can manually install with: yay -S spotify"
     fi
 fi
 

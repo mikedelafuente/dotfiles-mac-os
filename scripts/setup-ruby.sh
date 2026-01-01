@@ -30,7 +30,7 @@ print_tool_setup_start "Ruby on Rails"
 if command -v ruby &> /dev/null; then
     print_info_message "Ruby is already installed: $(ruby --version)"
 else
-    print_info_message "Installing Ruby from official Arch repositories"
+    print_info_message "Installing Ruby via Homebrew"
     brew_install_formula ruby
     print_info_message "Ruby installed: $(ruby --version)"
 fi

@@ -1,13 +1,13 @@
 #!/bin/bash
 
 # --------------------------
-# Setup TablePlus for Arch Linux
+# Setup TablePlus for macOS
 # --------------------------
-# TablePlus is an application for managing multiple databases. It is installed via yay from
-# the AUR (Arch User Repository). This is the recommended method because:
-# - Official TablePlus package available in AUR
-# - Better integration with system libraries
-# - Standard Arch package management via yay
+# TablePlus is an application for managing multiple databases. It is installed via
+# Homebrew Cask. This is the recommended method because:
+# - Official TablePlus package available as Homebrew Cask
+# - Native macOS application
+# - Standard Homebrew package management
 # --------------------------
 
 # --------------------------
