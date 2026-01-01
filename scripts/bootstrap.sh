@@ -177,9 +177,6 @@ bash "$DF_SCRIPT_DIR/setup-tableplus.sh"
 # Setup Neovim and Lazyvim - This needs to run after python setup
 bash "$DF_SCRIPT_DIR/setup-neovim.sh"
 
-# Setup Mullvad VPN
-bash "$DF_SCRIPT_DIR/setup-mullvad.sh"
-
 # Run the setup-docker.sh script to set up Docker
 bash "$DF_SCRIPT_DIR/setup-docker.sh"
 
@@ -200,12 +197,6 @@ bash "$DF_SCRIPT_DIR/setup-ruby.sh"
 
 # Install Postman
 bash "$DF_SCRIPT_DIR/setup-postman.sh"
-
-# Install Steam
-bash "$DF_SCRIPT_DIR/setup-steam.sh"
-
-# Install Discord
-bash "$DF_SCRIPT_DIR/setup-discord.sh"
 
 # Install Spotify
 bash "$DF_SCRIPT_DIR/setup-spotify.sh"

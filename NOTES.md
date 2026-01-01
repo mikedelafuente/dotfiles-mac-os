@@ -69,16 +69,13 @@ exec bash
 - Docker Desktop, Kitty Terminal, TablePlus, Postman
 
 **Communication:**
-- Discord, Zoom
+- Zoom
 
 **Productivity:**
 - Obsidian, Rectangle, Raycast, Karabiner-Elements
 
 **Entertainment:**
-- Spotify, Steam
-
-**Security:**
-- Mullvad VPN
+- Spotify
 
 **Fonts:**
 - Nerd Fonts (Meslo, Ubuntu, Fira Code, JetBrains Mono, Hack)

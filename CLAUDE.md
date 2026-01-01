@@ -188,11 +188,9 @@ print_tool_setup_complete "Tool Name"
 **setup-essentials.sh**: Installs GNU coreutils (coreutils, findutils, gnu-sed, gnu-tar, grep) for Linux command compatibility. The .bashrc is configured to prioritize GNU versions in PATH.
 
 **GUI Applications**: Installed via Homebrew Cask:
-- Discord, Spotify, Obsidian, Zoom (productivity apps)
+- Spotify, Obsidian, Zoom (productivity apps)
 - Postman, TablePlus (developer tools)
 - Kitty terminal
-- Mullvad VPN
-- Steam (gaming)
 
 **macOS-Specific Tools**: New scripts for macOS productivity:
 - Rectangle (window management, replaces Linux tiling WM)
