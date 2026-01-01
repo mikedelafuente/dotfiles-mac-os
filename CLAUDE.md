@@ -30,7 +30,6 @@ dotfiles-mac-os/
 │   └── dotfiles/                 # Single stow package
 │       ├── .config/              # → ~/.config/
 │       │   ├── alacritty/
-│       │   ├── kitty/
 │       │   ├── lazydocker/
 │       │   ├── lazygit/
 │       │   ├── nvim/             # Neovim configuration (LazyVim)
@@ -190,7 +189,7 @@ print_tool_setup_complete "Tool Name"
 **GUI Applications**: Installed via Homebrew Cask:
 - Spotify, Obsidian, Zoom (productivity apps)
 - Postman, TablePlus (developer tools)
-- Kitty terminal
+- Alacritty terminal
 
 **macOS-Specific Tools**: New scripts for macOS productivity:
 - Rectangle (window management, replaces Linux tiling WM)

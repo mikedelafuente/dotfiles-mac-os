@@ -66,7 +66,7 @@ exec bash
 ### Homebrew Casks (GUI Applications)
 
 **Development:**
-- Docker Desktop, Kitty Terminal, TablePlus, Postman
+- Docker Desktop, Alacritty Terminal, TablePlus, Postman
 
 **Communication:**
 - Zoom
@@ -86,7 +86,7 @@ All dotfiles are symlinked from `stow/dotfiles/` to your home directory:
 - Shell: `.bashrc`, `.profile`, `.inputrc`
 - Git: `.gitconfig`, `.gitignore_global`
 - Editors: `.config/nvim/`, `.tmux.conf`
-- Tools: `.config/kitty/`, `.config/lazygit/`, `.config/starship.toml`
+- Tools: `.config/alacritty/`, `.config/lazygit/`, `.config/starship.toml`
 
 ## Post-Installation Steps
 

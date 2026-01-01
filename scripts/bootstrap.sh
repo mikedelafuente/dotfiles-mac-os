@@ -168,8 +168,8 @@ bash "$DF_SCRIPT_DIR/setup-rust.sh"
 # Setup Go (Golang)
 bash "$DF_SCRIPT_DIR/setup-golang.sh"
 
-# Setup Kitty with Catpuccin theme
-bash "$DF_SCRIPT_DIR/setup-kitty.sh"
+# Setup Alacritty terminal
+bash "$DF_SCRIPT_DIR/setup-alacritty.sh"
 
 # Setup TablePlus for database management
 bash "$DF_SCRIPT_DIR/setup-tableplus.sh"
