@@ -193,7 +193,7 @@ bash "$DF_SCRIPT_DIR/setup-code.sh"
 bash "$DF_SCRIPT_DIR/setup-php.sh"
 
 # Install Ruby on Rails
-bash "$DF_SCRIPT_DIR/setup-ruby.sh"
+# bash "$DF_SCRIPT_DIR/setup-ruby.sh"
 
 # Install Postman
 bash "$DF_SCRIPT_DIR/setup-postman.sh"
