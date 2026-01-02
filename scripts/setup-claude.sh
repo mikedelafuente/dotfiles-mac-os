@@ -30,16 +30,21 @@ print_tool_setup_start "Claude Code CLI"
 # Install Claude Code via npm
 # --------------------------
 
+# Load NVM if available (required for npm with NVM installations)
+export NVM_DIR="$USER_HOME_DIR/.nvm"
+# shellcheck source=/dev/null
+[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
+
 # Check if npm is installed
 if ! command -v npm &> /dev/null; then
     print_error_message "npm is not installed. Please run setup-node.sh first."
     exit 1
 fi
 
-# Install Claude Code via npm
+# Install Claude Code via npm (no sudo needed with NVM)
 if ! command -v claude-code &> /dev/null; then
-    print_action_message "Installing Claude Code CLI..."
-    sudo npm install -g @anthropic-ai/claude-code
+    print_action_message "Installing Claude Code CLI globally via npm..."
+    npm install -g @anthropic-ai/claude-code
 
     if command -v claude-code &> /dev/null; then
         print_success_message "Claude Code CLI installed successfully!"
