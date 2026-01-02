@@ -64,8 +64,8 @@ brew_install_formulas "${NEOVIM_DEPS[@]}"
 # Install python-pynvim via pip if python3 is available
 if command -v python3 &> /dev/null && command -v pip3 &> /dev/null; then
     if ! pip3 list | grep -q pynvim; then
-        print_info_message "Installing pynvim via pip3"
-        pip3 install pynvim
+        print_info_message "Installing pynvim via pip3 (user installation)"
+        pip3 install --user pynvim
     else
         print_info_message "pynvim is already installed"
     fi
