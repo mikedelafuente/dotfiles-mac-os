@@ -38,7 +38,7 @@ After bootstrap completes, restart your terminal to apply all PATH changes:
 
 ```bash
 # Close and reopen Terminal, or:
-exec bash
+exec zsh
 ```
 
 ## What Gets Installed
