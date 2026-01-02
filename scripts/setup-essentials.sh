@@ -64,12 +64,7 @@ print_line_break "Installing essential packages via Homebrew"
 # Use brew-lib function to install all formulas
 brew_install_formulas "${ESSENTIAL_PACKAGES[@]}"
 
-# Post-installation hooks for packages that need special initialization
-if command -v zoxide &> /dev/null; then
-    print_info_message "Initializing zoxide for current session"
-    eval "$(zoxide init zsh)"
-fi
-
 print_success_message "GNU coreutils installed. PATH configured in .zshrc to use GNU commands by default."
+print_info_message "Zoxide initialization is configured in .zshrc for interactive shells."
 
 print_tool_setup_complete "Essential Packages"
