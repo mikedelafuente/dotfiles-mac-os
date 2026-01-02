@@ -146,15 +146,15 @@ bash "$DF_SCRIPT_DIR/setup-essentials.sh"
 # Set up Git configuration
 bash "$DF_SCRIPT_DIR/setup-git.sh" "$FULL_NAME" "$EMAIL_ADDRESS"
 
-# Setup GitHub CLI and Copilot CLI
-bash "$DF_SCRIPT_DIR/setup-github-cli.sh"
-
 # --------------------------
 # Run Individual Setup Scripts
 # --------------------------
 
 # Install Node.js and npm (needed by multiple tools)
 bash "$DF_SCRIPT_DIR/setup-node.sh"
+
+# Setup GitHub CLI and Copilot CLI
+bash "$DF_SCRIPT_DIR/setup-github-cli.sh"
 
 # Setup Python
 bash "$DF_SCRIPT_DIR/setup-python.sh"
