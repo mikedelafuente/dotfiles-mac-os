@@ -23,8 +23,8 @@ fi
 
 print_tool_setup_start "Nerd Fonts"
 
-# Tap the Homebrew cask-fonts repository if not already tapped
-brew_tap_if_needed homebrew/cask-fonts
+# Note: Fonts are now available in the main homebrew/cask tap
+# No separate tap needed (homebrew/cask-fonts is deprecated)
 
 # Nerd Fonts to install
 NERD_FONTS=(
