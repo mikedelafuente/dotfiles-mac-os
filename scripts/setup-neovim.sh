@@ -56,19 +56,28 @@ print_info_message "Neovim version: $(nvim --version | head -n 1)"
 print_info_message "Installing dependencies for Neovim plugins"
 
 # Homebrew dependencies for Neovim plugins
-# Note: python-pynvim -> use pip3 install pynvim instead
-NEOVIM_DEPS=("fd" "ripgrep" "gcc" "make")
+NEOVIM_DEPS=("fd" "ripgrep" "gcc" "make" "pipx")
 
 brew_install_formulas "${NEOVIM_DEPS[@]}"
 
-# Install python-pynvim via pip if python3 is available
-if command -v python3 &> /dev/null && command -v pip3 &> /dev/null; then
-    if ! pip3 list | grep -q pynvim; then
-        print_info_message "Installing pynvim via pip3 (user installation)"
-        pip3 install --user pynvim
+# Ensure pipx path is configured (required before first use)
+if command -v pipx &> /dev/null; then
+    print_info_message "Ensuring pipx path is configured"
+    pipx ensurepath &> /dev/null || true
+fi
+
+# Install pynvim via pipx (isolated Python environment)
+# This avoids PEP 668 externally-managed-environment errors on macOS
+if command -v pipx &> /dev/null; then
+    if ! pipx list | grep -q pynvim; then
+        print_info_message "Installing pynvim via pipx (isolated environment)"
+        pipx install pynvim
     else
-        print_info_message "pynvim is already installed"
+        print_info_message "pynvim is already installed via pipx"
     fi
+else
+    print_warning_message "pipx not found. Skipping pynvim installation."
+    print_info_message "pynvim is optional for most modern Neovim plugins (Lua/Node.js based)"
 fi
 
 # Verify Node.js (required for some LSP servers, should be installed via setup-node.sh)
