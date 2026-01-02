@@ -1,11 +1,13 @@
 # ~/.profile: executed by the command interpreter for login shells.
-# This file is not read by bash(1), if ~/.bash_profile or ~/.bash_login
-# exists.
-# see /usr/share/doc/bash/examples/startup-files for examples.
-# the files are located in the bash-doc package.
+# Works with both bash and zsh.
 
 # Set the default umask for file creation permissions
 #umask 022
+
+# If running zsh, include .zshrc if it exists
+if [ -n "$ZSH_VERSION" ] && [ -f "$HOME/.zshrc" ]; then
+    . "$HOME/.zshrc"
+fi
 
 # If running bash, include .bashrc if it exists
 if [ -n "$BASH_VERSION" ] && [ -f "$HOME/.bashrc" ]; then

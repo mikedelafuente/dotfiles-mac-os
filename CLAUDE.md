@@ -39,7 +39,7 @@ dotfiles-mac-os/
 │       ├── .local/
 │       │   └── bin/
 │       │       └── code          # Custom development environment launcher
-│       ├── .bashrc               # Bash configuration with GNU coreutils
+│       ├── .zshrc               # Zsh configuration with GNU coreutils
 │       ├── .gitconfig            # Git configuration with macOS helpers
 │       ├── .gitignore_global
 │       ├── .inputrc
@@ -176,7 +176,7 @@ print_tool_setup_complete "Tool Name"
 
 **setup-git.sh**: Accepts full name and email as arguments (passed from bootstrap.sh). Configures git with macOS osxkeychain credential helper.
 
-**setup-bash.sh**: Installs modern bash via Homebrew (macOS ships with old bash 3.2), adds it to `/etc/shells`, and sets it as the default shell.
+**setup-starship.sh**: Installs modern bash via Homebrew (macOS ships with old bash 3.2), adds it to `/etc/shells`, and sets it as the default shell.
 
 **setup-docker.sh**: Installs Docker Desktop via Homebrew Cask. Does NOT use systemctl (Linux-only). User must launch Docker Desktop manually after installation.
 
@@ -184,7 +184,7 @@ print_tool_setup_complete "Tool Name"
 
 **setup-node.sh**: Uses NVM (Node Version Manager) via curl installation for maximum compatibility and version management.
 
-**setup-essentials.sh**: Installs GNU coreutils (coreutils, findutils, gnu-sed, gnu-tar, grep) for Linux command compatibility. The .bashrc is configured to prioritize GNU versions in PATH.
+**setup-essentials.sh**: Installs GNU coreutils (coreutils, findutils, gnu-sed, gnu-tar, grep) for Linux command compatibility. The .zshrc is configured to prioritize GNU versions in PATH.
 
 **GUI Applications**: Installed via Homebrew Cask:
 - Spotify, Obsidian, Zoom (productivity apps)
@@ -201,7 +201,7 @@ print_tool_setup_complete "Tool Name"
 ### How It Works
 
 GNU Stow creates symlinks from the `stow/dotfiles/` directory to your home directory. For example:
-- `stow/dotfiles/.bashrc` → `~/.bashrc`
+- `stow/dotfiles/.zshrc` → `~/.zshrc`
 - `stow/dotfiles/.config/nvim/` → `~/.config/nvim/`
 - `stow/dotfiles/.local/bin/code` → `~/.local/bin/code`
 
@@ -237,7 +237,7 @@ Files in `stow/dotfiles/.config/` are linked to `~/.config/`
 - **scripts/brew-lib.sh**: Homebrew-specific utilities for package management
 - **scripts/bootstrap.sh**: Orchestration logic and sequencing of all setup operations
 - **scripts/stow-dotfiles.sh**: GNU Stow wrapper for dotfiles management
-- **stow/dotfiles/.bashrc**: Bash configuration with Homebrew and GNU coreutils in PATH
+- **stow/dotfiles/.zshrc**: Zsh configuration with Homebrew and GNU coreutils in PATH
 - **stow/dotfiles/.gitconfig**: Git configuration with macOS credential helper
 
 ## macOS-Specific Considerations
@@ -248,7 +248,7 @@ Apple Silicon Macs use `/opt/homebrew` for Homebrew installation (Intel Macs use
 
 ### GNU Coreutils in PATH
 
-The `.bashrc` file adds GNU coreutils to the PATH with highest priority:
+The `.zshrc` file adds GNU coreutils to the PATH with highest priority:
 ```bash
 export PATH="/opt/homebrew/opt/coreutils/libexec/gnubin:$PATH"
 export PATH="/opt/homebrew/opt/findutils/libexec/gnubin:$PATH"
@@ -273,7 +273,7 @@ Docker on macOS requires Docker Desktop (GUI app). Unlike Linux, there is no sys
 
 ### Shell Configuration
 
-macOS ships with bash 3.2 (from 2007) due to licensing. The setup-bash.sh script installs a modern bash version via Homebrew and configures it as the default shell.
+macOS ships with bash 3.2 (from 2007) due to licensing. The setup-starship.sh script installs a modern bash version via Homebrew and configures it as the default shell.
 
 ## Development Notes
 
@@ -294,4 +294,4 @@ This repository was converted from an Arch Linux dotfiles repository. Key change
 - Added GNU coreutils for command compatibility
 - Removed systemd service management
 - Added macOS-specific productivity tools
-- Updated .bashrc and .gitconfig for macOS
+- Updated .zshrc and .gitconfig for macOS

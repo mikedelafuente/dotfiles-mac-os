@@ -83,7 +83,7 @@ exec bash
 ## Dotfiles Managed by GNU Stow
 
 All dotfiles are symlinked from `stow/dotfiles/` to your home directory:
-- Shell: `.bashrc`, `.profile`, `.inputrc`
+- Shell: `.zshrc`, `.profile`, `.inputrc`
 - Git: `.gitconfig`, `.gitignore_global`
 - Editors: `.config/nvim/`, `.tmux.conf`
 - Tools: `.config/alacritty/`, `.config/lazygit/`, `.config/starship.toml`
@@ -117,7 +117,7 @@ Launch from Applications and grant permissions.
 ## Troubleshooting
 
 **Homebrew Installation Fails**: Run Homebrew installer manually
-**Stow Conflicts**: Backup existing files with `mv ~/.bashrc ~/.bashrc.backup`
+**Stow Conflicts**: Backup existing files with `mv ~/.zshrc ~/.zshrc.backup`
 **Command Not Found**: Run `eval "$(/opt/homebrew/bin/brew shellenv)"`
 **Docker Issues**: Launch Docker Desktop from Applications manually
 

@@ -159,8 +159,8 @@ bash "$DF_SCRIPT_DIR/setup-node.sh"
 # Setup Python
 bash "$DF_SCRIPT_DIR/setup-python.sh"
 
-# Setup Bash
-bash "$DF_SCRIPT_DIR/setup-bash.sh"
+# Setup Starship Prompt (works with zsh)
+bash "$DF_SCRIPT_DIR/setup-starship.sh"
 
 # Before setting up Alacritty, ensure Rust is installed
 bash "$DF_SCRIPT_DIR/setup-rust.sh"

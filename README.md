@@ -32,7 +32,7 @@ You'll be prompted for your name and email for git configuration. The bootstrap 
 - **Fonts**: Nerd Fonts collection (Meslo, Ubuntu, Fira Code, JetBrains Mono, Hack)
 
 ### Dotfiles (managed by GNU Stow)
-- Shell: `.bashrc`, `.profile`, `.inputrc`
+- Shell: `.zshrc`, `.profile`, `.inputrc`
 - Git: `.gitconfig`, `.gitignore_global`
 - Editors: `.config/nvim/` (LazyVim), `.tmux.conf`
 - Tools: `.config/alacritty/`, `.config/lazygit/`, `.config/starship.toml`
@@ -48,7 +48,7 @@ You'll be prompted for your name and email for git configuration. The bootstrap 
 
 After bootstrap completes, restart your terminal:
 ```bash
-exec bash
+exec zsh
 ```
 
 ### GitHub Authentication

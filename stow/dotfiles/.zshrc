@@ -1,4 +1,4 @@
-# ~/.bashrc
+# ~/.zshrc - Zsh configuration for macOS
 
 # -------------------------
 # Homebrew Setup (macOS)
@@ -36,14 +36,12 @@ fi
 # Give a small intro message upon starting a new shell that most developers use
 # echo "Type 'aliases' to see custom aliases and key bindings."
 
-# enable programmable completion features
-# macOS Homebrew bash completion
-if ! shopt -oq posix; then
-    if [ -f "/opt/homebrew/etc/bash_completion" ]; then
-        . "/opt/homebrew/etc/bash_completion"
-    elif [ -f "/opt/homebrew/etc/profile.d/bash_completion.sh" ]; then
-        . "/opt/homebrew/etc/profile.d/bash_completion.sh"
-    fi
+# Enable zsh completion system
+autoload -Uz compinit && compinit
+
+# Homebrew zsh completion
+if type brew &>/dev/null; then
+    FPATH="$(brew --prefix)/share/zsh/site-functions:${FPATH}"
 fi
 
 
@@ -370,16 +368,16 @@ export CLICOLOR=1
 export LSCOLORS=GxFxCxDxBxegedabagacad
 
 # Load additional scripts if they exist
-if [ -f "$HOME/.bash_aliases" ]; then
-    . "$HOME/.bash_aliases"
+if [ -f "$HOME/.zsh_aliases" ]; then
+    . "$HOME/.zsh_aliases"
 fi
 
 # Initialize Starship prompt if installed
 if command -v starship &> /dev/null; then
-    eval "$(starship init bash)"
+    eval "$(starship init zsh)"
 fi
 
-# User-specific shell configuration for bash
+# User-specific shell configuration for zsh
 if [ -f "$HOME/.cargo/env" ]; then
     . "$HOME/.cargo/env"
 fi
