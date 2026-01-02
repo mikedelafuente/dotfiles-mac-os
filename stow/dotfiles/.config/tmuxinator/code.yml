@@ -23,7 +23,8 @@ windows:
         - tmux select-pane -t 1
   - mycli:
       panes:
-        - mycli --user laravel laravel --password password
+        - # mycli connection - customize with your database credentials
+        - # Example: mycli --user username database_name --password your_password
   - lazygit:
       panes:
         - lazygit

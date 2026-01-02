@@ -1,111 +1,130 @@
-# Kickstart for .NET dev on a Mac
-New dev machine? Start here
+# macOS Dotfiles
 
-## Setting up your environment
-- Rename your laptop:
-    ```shell
-    sudo scutil --set HostName <DesiredName>
-    sudo scutil --set LocalHostName <DesiredName>
-    sudo scutil --set ComputerName <DesiredName>
-    dscacheutil -flushcache
-    ```
-- Install Homebrew
-    ```shell
-    /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
-    touch ~/.zprofile
-    echo 'eval "$(/opt/homebrew/bin/brew shellenv)"' >> ~/.zprofile
-    eval "$(/opt/homebrew/bin/brew shellenv)"
-    brew update
-    brew upgrade
-    echo 'export PATH=/usr/local/bin:$PATH' >> ~/.zshrc
-    echo 'export PATH=/opt/homebrew/bin:$PATH' >> ~/.zshrc
-    echo 'export PATH=/opt/homebrew/sbin:$PATH' >> ~/.zshrc
-    ```
-- Setup your Git config
-    ```shell
-    git config --global user.name "FirstName LastName"
-    git config --global user.email "first.last@example.com"
-    git config --global core.editor "code --wait"
-    git config --global pull.rebase true
-    git config --global init.defaultBranch main
-    ```
-- Install [Oh My Zsh](https://ohmyz.sh/)
-  ```shell
-  sh -c "$(curl -fsSL https://raw.github.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
-  ```
-- Enable the ability to install fonts from Homebrew
-  ```shell
-  brew install --cask font-hack-nerd-font
-  brew install --cask font-meslo-lg-nerd-font
-  brew install --case font-jetbrainsmono-nerd-font
-  brew install --case font-mononoki-nerd-font
-  brew install --case font-roboto-mono
-  brew install --case font-ubuntu-mono-nerd-font
-  ```
-  Alternately, you can install all of the fonts (not advised):
-  ```shell
-  brew search '/font-.*-nerd-font/' | awk '{ print $1 }' | xargs -I{} brew install --cask {} || true
-  ```
-- Install Powerlevel10k
-  ```shell
-  git clone --depth=1 https://github.com/romkatv/powerlevel10k.git ${ZSH_CUSTOM:-$HOME/.oh-my-zsh/custom}/themes/powerlevel10k
-  ```
-  Set `ZSH_THEME="powerlevel10k/powerlevel10k"` in ~/.zshrc.
-  Run `exec zsh` to trigger the install process. Here are the typical install options used:
-  - Rainbow
-  - Unicode
-  - 24-hour format
-  - vertical
-  - flat
-  - flat
-  - Two Lines
-  - Disconnected
-  - No Frame
-  - Sparse
-  - Few Icons
-  - Fluent
-  - No Transient Prompt
-  - Verbose
-  - Apply Changes
-- Configure Powerlevel10K
-  ```shell
-  p10k configure
-  ```
-- Install .NET 8:
-    ```shell
-    brew install --cask dotnet-sdk
-    dotnet --version
-    ```
-- Install mkcert
-    ```shell
-    brew install mkcert
-    brew install nss # for Firefox
-    mkcert -install #installs a root CA
-    ```
-- Install DNS Masq which will make it so you _never_ have to touch your local `/etc/hosts/` file again.
-    ```shell
-    brew install dnsmasq
-    mkdir -pv $(brew --prefix)/etc/ # create the config directory
-    echo 'address=/.test/127.0.0.1' >> $(brew --prefix)/etc/dnsmasq.conf # setup *.test aliases
-    echo 'port=53' >> $(brew --prefix)/etc/dnsmasq.conf # Change port for High Sierra
-    # Autostart - now and after reboot
-    sudo brew services start dnsmasq
-    # Create resolver directory
-    sudo mkdir -v /etc/resolver
-    # Add your nameserver to resolvers
-    sudo bash -c 'echo "nameserver 127.0.0.1" > /etc/resolver/test'
-    ```
-  You can run scutil --dns to show all of your current resolvers, and you should see that all requests for a domain ending in .test will go to the DNS server at 127.0.0.1
-- Install Chrome
-    - Sign into your Google work account
-- Install Obsidian (Markdown reader):
-  ```shell
-  brew install obsidian
-  ```
-- Install [Docker Desktop](https://docs.docker.com/desktop/install/mac-install/) (don’t use brew - that is the CLI only)
-- Install Rider
-    ```shell
-    brew install --cask rider
-    ```
-    _Note_: VSCode does not play nicely with .NET projects because why would a Microsoft technology work properly with VSCode??
-- Login to your [Github.com](http://Github.com) account and [setup an SSH key](https://docs.github.com/en/authentication/connecting-to-github-with-ssh/generating-a-new-ssh-key-and-adding-it-to-the-ssh-agent). You can use your personal account as long as it was invited to the GitHub repo.
+Automated macOS development environment setup for Apple Silicon Macs using Homebrew and GNU Stow.
+
+## Quick Start
+
+```bash
+git clone https://github.com/yourusername/dotfiles-mac-os.git ~/dotfiles-mac-os
+cd ~/dotfiles-mac-os
+bash scripts/bootstrap.sh
+```
+
+You'll be prompted for your name and email for git configuration. The bootstrap script will:
+- Install Homebrew (if not already installed)
+- Install all development tools and applications
+- Link dotfiles using GNU Stow
+- Configure your development environment
+
+## What Gets Installed
+
+### CLI Tools
+- **Essentials**: git, gh, curl, wget, fzf, ripgrep, fd, bat, htop, btop, ncdu, tree, jq, tmux, zoxide, stow
+- **GNU Coreutils**: coreutils, findutils, gnu-sed, gnu-tar, grep (Linux compatibility)
+- **Languages**: Python, Node.js (via NVM), Rust, Go, Ruby, PHP
+- **Containers**: Docker Desktop, Minikube, kubectl, k9s
+
+### GUI Applications
+- **Development**: Alacritty, Docker Desktop, TablePlus, Postman
+- **Productivity**: Obsidian, Rectangle, Raycast, Karabiner-Elements
+- **Communication**: Zoom
+- **Entertainment**: Spotify
+- **Fonts**: Nerd Fonts collection (Meslo, Ubuntu, Fira Code, JetBrains Mono, Hack)
+
+### Dotfiles (managed by GNU Stow)
+- Shell: `.bashrc`, `.profile`, `.inputrc`
+- Git: `.gitconfig`, `.gitignore_global`
+- Editors: `.config/nvim/` (LazyVim), `.tmux.conf`
+- Tools: `.config/alacritty/`, `.config/lazygit/`, `.config/starship.toml`
+- Custom: `.local/bin/code` (development environment launcher)
+
+## Requirements
+
+- macOS 14.0 (Sonoma) or later
+- Apple Silicon Mac (M1/M2/M3)
+- Admin access for installing Homebrew
+
+## Post-Installation
+
+After bootstrap completes, restart your terminal:
+```bash
+exec bash
+```
+
+### GitHub Authentication
+```bash
+gh auth login
+```
+
+### SSH Keys
+```bash
+ssh-keygen -t ed25519 -C "your_email@example.com"
+cat ~/.ssh/id_ed25519.pub | pbcopy
+# Add to GitHub → Settings → SSH keys
+```
+
+### Docker Desktop
+Launch Docker Desktop from Applications and grant necessary permissions.
+
+### macOS Productivity Tools
+- **Rectangle**: Grant Accessibility permissions for window management
+- **Raycast**: Set Cmd+Space hotkey, enable clipboard history
+- **Karabiner-Elements**: Grant Input Monitoring permissions
+
+## Customization
+
+### Individual Setup Scripts
+Run specific setup scripts independently:
+```bash
+bash scripts/setup-neovim.sh
+bash scripts/setup-rust.sh
+bash scripts/setup-docker.sh
+```
+
+### Manage Dotfiles
+```bash
+# Link all dotfiles
+bash scripts/stow-dotfiles.sh link
+
+# Unlink all dotfiles
+bash scripts/stow-dotfiles.sh unlink
+
+# Refresh symlinks
+bash scripts/stow-dotfiles.sh relink
+```
+
+### Custom Development Environment
+The `code` command launches a tmuxinator session for project work:
+```bash
+code /path/to/project
+```
+
+Customize the layout in `~/.config/tmuxinator/code.yml`
+
+## Documentation
+
+- **[CLAUDE.md](CLAUDE.md)**: Detailed project architecture and design decisions
+- **[NOTES.md](NOTES.md)**: Installation notes and troubleshooting guide
+
+## Updates
+
+```bash
+cd ~/dotfiles-mac-os
+git pull
+bash scripts/bootstrap.sh  # Re-run to install new tools
+brew update && brew upgrade  # Update installed packages
+```
+
+## Architecture
+
+This project uses:
+- **Homebrew**: Package management (formulas for CLI, casks for GUI apps)
+- **GNU Stow**: Dotfiles management via symlinks
+- **Modular Scripts**: Independent setup scripts for each tool
+- **Utility Libraries**: Shared functions for consistent output and Homebrew operations
+
+All scripts are idempotent and safe to run multiple times.
+
+## License
+
+This is a personal dotfiles repository. Feel free to fork and customize for your own use.

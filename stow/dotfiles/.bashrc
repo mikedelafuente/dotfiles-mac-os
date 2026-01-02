@@ -385,7 +385,7 @@ if [ -f "$HOME/.cargo/env" ]; then
 fi
 
 # NVM (Node Version Manager) setup
-export NVM_DIR="$HOME/.config/nvm"
+export NVM_DIR="$HOME/.nvm"
 [ -s "$NVM_DIR/nvm.sh" ] && . "$NVM_DIR/nvm.sh"  # This loads nvm
 [ -s "$NVM_DIR/bash_completion" ] && . "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
 
@@ -401,8 +401,8 @@ if [ -d "$HOME/.config/herd-lite/bin" ]; then
     export PHP_INI_SCAN_DIR="$HOME/.config/herd-lite/bin:$PHP_INI_SCAN_DIR"
 fi
 
-export PATH="$PATH:/home/dela/.config/composer/vendor/bin"
-export PATH="$PATH:/home/dela/.config/composer/vendor/bin"
+# Composer global binaries
+export PATH="$PATH:$HOME/.config/composer/vendor/bin"
 
 # Ruby gem binaries
 if [ -d "$HOME/.local/share/gem/ruby/3.4.0/bin" ]; then
