@@ -176,7 +176,7 @@ print_tool_setup_complete "Tool Name"
 
 **setup-git.sh**: Accepts full name and email as arguments (passed from bootstrap.sh). Configures git with macOS osxkeychain credential helper.
 
-**setup-starship.sh**: Installs modern bash via Homebrew (macOS ships with old bash 3.2), adds it to `/etc/shells`, and sets it as the default shell.
+**setup-starship.sh**: Installs Starship prompt via Homebrew. Starship is a minimal, fast, and customizable prompt for any shell (works with zsh, bash, fish, etc.).
 
 **setup-docker.sh**: Installs Docker Desktop via Homebrew Cask. Does NOT use systemctl (Linux-only). User must launch Docker Desktop manually after installation.
 
@@ -273,7 +273,7 @@ Docker on macOS requires Docker Desktop (GUI app). Unlike Linux, there is no sys
 
 ### Shell Configuration
 
-macOS ships with bash 3.2 (from 2007) due to licensing. The setup-starship.sh script installs a modern bash version via Homebrew and configures it as the default shell.
+macOS uses Zsh as the default shell since Catalina (10.15). This project uses Zsh with `.zshrc` for shell configuration. The setup-starship.sh script installs Starship prompt which works with Zsh to provide a modern, customizable prompt.
 
 ## Development Notes
 

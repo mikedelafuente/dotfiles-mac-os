@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # --------------------------
-# fn-lib.sh - A library of reusable bash functions for Arch setup scripts
+# fn-lib.sh - A library of reusable bash functions for macOS setup scripts
 # --------------------------
 
 print_tool_setup_start() {

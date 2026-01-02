@@ -83,7 +83,7 @@ if command -v nvm &> /dev/null; then
     print_info_message "NVM version: $(nvm --version)"
     echo ""
     print_info_message "To use NVM in new terminals, restart your terminal or run:"
-    print_info_message "  source ~/.bashrc"
+    print_info_message "  source ~/.zshrc"
 else
     print_warning_message "NVM not available in current shell."
     print_info_message "Please restart your terminal and run: nvm install --lts"

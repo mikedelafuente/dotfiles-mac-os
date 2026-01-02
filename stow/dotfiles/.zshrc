@@ -125,7 +125,7 @@ alias lzd='lazydocker'
 alias c='clear'
 alias h='history'
 alias path='echo -e ${PATH//:/\\n}'
-alias reload='source ~/.bashrc'
+alias reload='source ~/.zshrc'
 alias please='sudo'
 alias ports='netstat -tulanp'
 alias qq='exit'
@@ -385,12 +385,12 @@ fi
 # NVM (Node Version Manager) setup
 export NVM_DIR="$HOME/.nvm"
 [ -s "$NVM_DIR/nvm.sh" ] && . "$NVM_DIR/nvm.sh"  # This loads nvm
-[ -s "$NVM_DIR/bash_completion" ] && . "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
+# Note: NVM zsh completion is handled by the compinit system above
 
 
 # Initialize zoxide if installed
 if command -v zoxide &> /dev/null; then
-    eval "$(zoxide init bash)"
+    eval "$(zoxide init zsh)"
 fi
 
 # Herd Lite PHP environment variables if installed

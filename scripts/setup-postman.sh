@@ -35,7 +35,7 @@ fi
 print_tool_setup_start "Postman"
 
 # --------------------------
-# Install Postman via AUR
+# Install Postman via Homebrew Cask
 # --------------------------
 
 # Check if Postman is already installed

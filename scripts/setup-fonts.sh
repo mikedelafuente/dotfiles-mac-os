@@ -26,7 +26,7 @@ print_tool_setup_start "Nerd Fonts"
 # Tap the Homebrew cask-fonts repository if not already tapped
 brew_tap_if_needed homebrew/cask-fonts
 
-# Nerd Fonts to install (same as original Arch setup)
+# Nerd Fonts to install
 NERD_FONTS=(
     font-meslo-lg-nerd-font
     font-ubuntu-nerd-font

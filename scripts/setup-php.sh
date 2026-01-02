@@ -100,9 +100,10 @@ else
 
         # Add Composer global bin to PATH if not already there
         COMPOSER_BIN="$USER_HOME_DIR/.config/composer/vendor/bin"
-        if [[ ":$PATH:" != *":$COMPOSER_BIN:"* ]]; then
-            print_info_message "Adding Composer global bin to PATH"
-            echo "export PATH=\"\$PATH:$COMPOSER_BIN\"" >> "$USER_HOME_DIR/.bashrc"
+        ZSHRC="$USER_HOME_DIR/.zshrc"
+        if [[ ":$PATH:" != *":$COMPOSER_BIN:"* ]] && [ -f "$ZSHRC" ]; then
+            print_info_message "Adding Composer global bin to PATH in ~/.zshrc"
+            echo "export PATH=\"\$PATH:$COMPOSER_BIN\"" >> "$ZSHRC"
         fi
 
         print_info_message "Laravel installer installed. Restart your terminal or run:"

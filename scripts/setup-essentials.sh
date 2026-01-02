@@ -67,9 +67,9 @@ brew_install_formulas "${ESSENTIAL_PACKAGES[@]}"
 # Post-installation hooks for packages that need special initialization
 if command -v zoxide &> /dev/null; then
     print_info_message "Initializing zoxide for current session"
-    eval "$(zoxide init bash)"
+    eval "$(zoxide init zsh)"
 fi
 
-print_success_message "GNU coreutils installed. Add to PATH in .bashrc to use GNU commands by default."
+print_success_message "GNU coreutils installed. PATH configured in .zshrc to use GNU commands by default."
 
 print_tool_setup_complete "Essential Packages"
