@@ -5,7 +5,7 @@
 # --------------------------
 
 # --------------------------
-# Import Common Header 
+# Import Common Header
 # --------------------------
 
 # add header file
@@ -21,41 +21,30 @@ else
 fi
 
 # --------------------------
-# End Import Common Header 
+# End Import Common Header
 # --------------------------
 
 print_tool_setup_start "Claude Code CLI"
 
 # --------------------------
-# Install Claude Code via npm
+# Install Claude Code via Homebrew
 # --------------------------
 
-# Load NVM if available (required for npm with NVM installations)
-export NVM_DIR="$USER_HOME_DIR/.nvm"
-# shellcheck source=/dev/null
-[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
-
-# Check if npm is installed
-if ! command -v npm &> /dev/null; then
-    print_error_message "npm is not installed. Please run setup-node.sh first."
-    exit 1
-fi
-
-# Install Claude Code via npm (no sudo needed with NVM)
-if ! command -v claude-code &> /dev/null; then
-    print_action_message "Installing Claude Code CLI globally via npm..."
-    npm install -g @anthropic-ai/claude-code
-
-    if command -v claude-code &> /dev/null; then
-        print_success_message "Claude Code CLI installed successfully!"
-        claude-code --version
-    else
-        print_error_message "Failed to install Claude Code CLI"
-        exit 1
-    fi
+# Check if Claude Code is already installed
+if ! command -v claude &> /dev/null; then
+    print_action_message "Installing Claude Code CLI via Homebrew..."
+    brew_install_formula claude-code
 else
     print_info_message "Claude Code CLI is already installed."
-    claude-code --version
+fi
+
+# Verify installation
+if command -v claude &> /dev/null; then
+    print_success_message "Claude Code CLI installed successfully!"
+    claude --version
+else
+    print_error_message "Failed to install Claude Code CLI"
+    exit 1
 fi
 
 # --------------------------
