@@ -32,27 +32,31 @@ check_stow_installed() {
 backup_existing_files() {
     print_info_message "Checking for existing files that need backup..."
 
-    # Check if stow would conflict with existing files
-    # We'll do a dry-run first
-    if ! stow -d "$STOW_DIR" -t "$TARGET_DIR" -n -v "$STOW_PACKAGE" 2>&1 | grep -q "WARNING\|ERROR"; then
+    local backup_timestamp
+    backup_timestamp="$(date +%Y%m%d_%H%M%S)"
+    local files_backed_up=0
+
+    # Find all files in the stow package directory
+    # and backup any that exist as regular files (not symlinks) in target
+    while IFS= read -r -d '' source_file; do
+        # Get relative path from stow package
+        local rel_path="${source_file#$STOW_DIR/$STOW_PACKAGE/}"
+        local target_file="$TARGET_DIR/$rel_path"
+
+        # If target exists and is NOT a symlink, back it up
+        if [ -e "$target_file" ] && [ ! -L "$target_file" ]; then
+            local backup_file="$target_file.backup.$backup_timestamp"
+            print_action_message "Backing up: $rel_path"
+            mv "$target_file" "$backup_file"
+            ((files_backed_up++))
+        fi
+    done < <(find "$STOW_DIR/$STOW_PACKAGE" -type f -print0)
+
+    if [ "$files_backed_up" -eq 0 ]; then
         print_success_message "No conflicts found - ready to link!"
-        return 0
+    else
+        print_warning_message "Backed up $files_backed_up file(s) with suffix .backup.$backup_timestamp"
     fi
-
-    print_warning_message "Some files would be overwritten. Creating backups..."
-
-    # Get list of files that would be created
-    stow -d "$STOW_DIR" -t "$TARGET_DIR" -n -v "$STOW_PACKAGE" 2>&1 | \
-        grep "LINK:" | \
-        awk '{print $NF}' | \
-        while read -r file; do
-            target_file="$TARGET_DIR/$file"
-            if [ -e "$target_file" ] && [ ! -L "$target_file" ]; then
-                backup_file="$target_file.backup.$(date +%Y%m%d_%H%M%S)"
-                print_action_message "Backing up: $target_file → $backup_file"
-                mv "$target_file" "$backup_file"
-            fi
-        done
 }
 
 link_dotfiles() {
