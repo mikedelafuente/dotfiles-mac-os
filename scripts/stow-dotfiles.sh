@@ -81,14 +81,25 @@ link_dotfiles() {
 
     backup_existing_files
 
-    print_action_message "Creating symlinks..."
+    print_action_message "Creating symlinks with GNU Stow..."
 
-    if stow -d "$STOW_DIR" -t "$TARGET_DIR" -v "$STOW_PACKAGE" 2>&1; then
+    # Capture stow output for debugging
+    local stow_output
+    stow_output=$(stow -d "$STOW_DIR" -t "$TARGET_DIR" -v "$STOW_PACKAGE" 2>&1)
+    local stow_exit=$?
+
+    if [ $stow_exit -eq 0 ]; then
         print_success_message "Dotfiles successfully linked!"
         print_info_message "All configuration files are now symlinked to $TARGET_DIR"
     else
         print_error_message "Failed to link dotfiles!"
-        print_info_message "Run with --simulate to see what would happen"
+        print_error_message "Stow output:"
+        echo "$stow_output"
+        print_info_message ""
+        print_info_message "Possible solutions:"
+        print_info_message "  1. Run 'bash $0 simulate' to see what stow would do"
+        print_info_message "  2. Check for existing directories that conflict with stow"
+        print_info_message "  3. Manually remove conflicting directories/files"
         exit 1
     fi
 }
@@ -142,6 +153,39 @@ simulate_link() {
     print_info_message "Run '$0 link' to apply these changes"
 }
 
+restore_backups() {
+    print_line_break "Restoring Backup Files"
+
+    print_info_message "Searching for backup files..."
+
+    # Find all backup files
+    local backup_files
+    backup_files=$(find "$TARGET_DIR" -name "*.backup.*" -type f 2>/dev/null)
+
+    if [ -z "$backup_files" ]; then
+        print_warning_message "No backup files found"
+        return 0
+    fi
+
+    print_info_message "Found backup files. Restoring..."
+
+    echo "$backup_files" | while read -r backup_file; do
+        # Extract original filename by removing .backup.TIMESTAMP
+        local original_file="${backup_file%.backup.*}"
+
+        # Only restore if the original doesn't exist or is a broken symlink
+        if [ ! -e "$original_file" ] || [ -L "$original_file" ]; then
+            print_action_message "Restoring: $(basename "$original_file")"
+            rm -f "$original_file"  # Remove broken symlink if exists
+            mv "$backup_file" "$original_file"
+        else
+            print_warning_message "Skipping (file exists): $(basename "$original_file")"
+        fi
+    done
+
+    print_success_message "Backup restoration complete!"
+}
+
 show_usage() {
     cat << EOF
 Usage: $0 <command>
@@ -151,6 +195,7 @@ Commands:
     unlink      Remove all dotfile symlinks
     relink      Refresh symlinks (unlink + link)
     simulate    Dry-run to see what would be linked
+    restore     Restore files from .backup.* files
     help        Show this help message
 
 Examples:
@@ -158,6 +203,7 @@ Examples:
     $0 simulate          # See what would happen (dry-run)
     $0 unlink            # Remove all symlinks
     $0 relink            # Refresh all symlinks
+    $0 restore           # Restore from backups if linking failed
 
 Note: Existing files will be backed up automatically with .backup suffix
 EOF
@@ -181,6 +227,9 @@ case "$COMMAND" in
         ;;
     simulate|--simulate|-n|--dry-run)
         simulate_link
+        ;;
+    restore)
+        restore_backups
         ;;
     help|--help|-h)
         show_usage

@@ -44,6 +44,7 @@ ESSENTIAL_PACKAGES=(
     tree
     jq
     tmux
+    ncurses
     btop
     duf
     stow
