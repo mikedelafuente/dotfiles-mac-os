@@ -1,6 +1,5 @@
--- ============================================================================-- bootstrap lazy.nvim, LazyVim and your plugins
-
--- Neovim Configurationrequire("config.lazy")
+-- ============================================================================
+-- Neovim Configuration
 -- ============================================================================
 -- A clean, beginner-friendly Neovim setup with LSP support for multiple languages
 --
@@ -25,6 +24,15 @@
 -- ============================================================================
 
 -- Load configuration modules
-require("config.options")   -- Vim options (line numbers, tabs, etc.)
-require("config.lazy")      -- Plugin manager setup
-require("config.keymaps")   -- Key mappings (loaded after plugins)
+local function safe_require(module, description)
+  local ok, err = pcall(require, module)
+  if not ok then
+    vim.notify("Failed to load " .. description .. ": " .. tostring(err), vim.log.levels.ERROR)
+    return false
+  end
+  return true
+end
+
+safe_require("config.options", "Vim options")
+safe_require("config.lazy", "Plugin manager")
+safe_require("config.keymaps", "Keymaps")

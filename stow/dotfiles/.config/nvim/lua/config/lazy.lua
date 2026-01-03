@@ -5,6 +5,7 @@
 
 local lazypath = vim.fn.stdpath("data") .. "/lazy/lazy.nvim"
 if not vim.loop.fs_stat(lazypath) then
+  print("Lazy.nvim not found. Cloning from GitHub...")
   vim.fn.system({
     "git",
     "clone",
@@ -13,11 +14,19 @@ if not vim.loop.fs_stat(lazypath) then
     "--branch=stable",
     lazypath,
   })
+  print("Lazy.nvim cloned successfully!")
 end
 vim.opt.rtp:prepend(lazypath)
 
 -- Load plugins from lua/plugins/ directory
-require("lazy").setup("plugins", {
+print("Loading Lazy.nvim plugin manager...")
+local ok, lazy = pcall(require, "lazy")
+if not ok then
+  vim.notify("Failed to load lazy.nvim: " .. tostring(lazy), vim.log.levels.ERROR)
+  return
+end
+
+lazy.setup("plugins", {
   defaults = {
     lazy = false,  -- Load plugins eagerly by default
   },

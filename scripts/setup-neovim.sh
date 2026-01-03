@@ -55,8 +55,20 @@ print_info_message "Neovim version: $(nvim --version | head -n 1)"
 
 print_info_message "Installing dependencies for Neovim plugins"
 
+# Check for Xcode Command Line Tools (required for treesitter on macOS)
+if ! xcode-select -p &> /dev/null; then
+    print_warning_message "Xcode Command Line Tools not found"
+    print_action_message "Installing Xcode Command Line Tools (required for treesitter)..."
+    xcode-select --install
+    print_info_message "Please complete the Xcode CLT installation in the popup window"
+    print_info_message "After installation completes, re-run this script"
+    exit 0
+else
+    print_info_message "Xcode Command Line Tools already installed"
+fi
+
 # Homebrew dependencies for Neovim plugins
-NEOVIM_DEPS=("fd" "ripgrep" "gcc" "make" "pipx")
+NEOVIM_DEPS=("fd" "ripgrep" "pipx")
 
 brew_install_formulas "${NEOVIM_DEPS[@]}"
 
