@@ -79,6 +79,10 @@ link_dotfiles() {
     print_info_message "Package: $STOW_PACKAGE"
     print_info_message "Target: $TARGET_DIR"
 
+    # Clean up first
+    clean_broken_symlinks
+    remove_empty_directories
+
     backup_existing_files
 
     print_action_message "Creating symlinks with GNU Stow..."
@@ -96,10 +100,76 @@ link_dotfiles() {
         print_error_message "Stow output:"
         echo "$stow_output"
         print_info_message ""
-        print_info_message "Possible solutions:"
-        print_info_message "  1. Run 'bash $0 simulate' to see what stow would do"
-        print_info_message "  2. Check for existing directories that conflict with stow"
-        print_info_message "  3. Manually remove conflicting directories/files"
+        print_info_message "Try running: bash $0 fix"
+        exit 1
+    fi
+}
+
+fix_dotfiles() {
+    print_line_break "Self-Healing Dotfiles Setup"
+
+    check_stow_installed
+
+    print_info_message "This will automatically fix common dotfile linking issues"
+    print_info_message ""
+
+    # Step 1: Clean broken symlinks
+    print_line_break "Step 1: Cleaning broken symlinks"
+    clean_broken_symlinks
+
+    # Step 2: Remove empty directories
+    print_line_break "Step 2: Removing empty directories"
+    remove_empty_directories
+
+    # Step 3: Restore from backups if files are missing
+    print_line_break "Step 3: Restoring from backups"
+    local restored=0
+    while IFS= read -r -d '' backup_file; do
+        local original_file="${backup_file%.backup.*}"
+        if [ ! -e "$original_file" ]; then
+            print_action_message "Restoring: ${original_file#$TARGET_DIR/}"
+            mv "$backup_file" "$original_file"
+            ((restored++))
+        fi
+    done < <(find "$TARGET_DIR" -name "*.backup.*" -type f -print0 2>/dev/null)
+
+    if [ "$restored" -gt 0 ]; then
+        print_success_message "Restored $restored file(s)"
+    else
+        print_info_message "No files needed restoration"
+    fi
+
+    # Step 4: Unlink any existing stow symlinks
+    print_line_break "Step 4: Unlinking existing stow configuration"
+    stow -d "$STOW_DIR" -t "$TARGET_DIR" -D "$STOW_PACKAGE" 2>/dev/null || true
+
+    # Step 5: Clean up again
+    print_line_break "Step 5: Final cleanup"
+    clean_broken_symlinks
+    remove_empty_directories
+
+    # Step 6: Backup existing files
+    print_line_break "Step 6: Backing up existing files"
+    backup_existing_files
+
+    # Step 7: Link with stow
+    print_line_break "Step 7: Creating fresh symlinks"
+    local stow_output
+    stow_output=$(stow -d "$STOW_DIR" -t "$TARGET_DIR" -v "$STOW_PACKAGE" 2>&1)
+    local stow_exit=$?
+
+    if [ $stow_exit -eq 0 ]; then
+        print_success_message "✓ Dotfiles successfully linked!"
+        print_info_message "All configuration files are now symlinked to $TARGET_DIR"
+        print_info_message ""
+        print_info_message "You can safely delete backup files if everything works:"
+        print_info_message "  find ~ -name '*.backup.*' -type f"
+    else
+        print_error_message "Failed to link dotfiles!"
+        print_error_message "Stow output:"
+        echo "$stow_output"
+        print_info_message ""
+        print_info_message "Please report this issue with the output above"
         exit 1
     fi
 }
@@ -153,37 +223,87 @@ simulate_link() {
     print_info_message "Run '$0 link' to apply these changes"
 }
 
+clean_broken_symlinks() {
+    print_info_message "Cleaning up broken symlinks..."
+
+    local cleaned=0
+    # Find broken symlinks in common dotfile locations
+    local search_paths=(
+        "$TARGET_DIR/.config"
+        "$TARGET_DIR/.local"
+        "$TARGET_DIR"
+    )
+
+    for search_path in "${search_paths[@]}"; do
+        if [ -d "$search_path" ]; then
+            while IFS= read -r -d '' broken_link; do
+                print_action_message "Removing broken symlink: ${broken_link#$TARGET_DIR/}"
+                rm -f "$broken_link"
+                ((cleaned++))
+            done < <(find "$search_path" -maxdepth 3 -xtype l -print0 2>/dev/null)
+        fi
+    done
+
+    if [ "$cleaned" -gt 0 ]; then
+        print_success_message "Removed $cleaned broken symlink(s)"
+    else
+        print_info_message "No broken symlinks found"
+    fi
+}
+
+remove_empty_directories() {
+    print_info_message "Removing empty directories..."
+
+    local removed=0
+    local search_paths=(
+        "$TARGET_DIR/.config"
+        "$TARGET_DIR/.local"
+    )
+
+    for search_path in "${search_paths[@]}"; do
+        if [ -d "$search_path" ]; then
+            # Find and remove empty directories (depth-first)
+            while IFS= read -r -d '' empty_dir; do
+                if [ -d "$empty_dir" ] && [ -z "$(ls -A "$empty_dir" 2>/dev/null)" ]; then
+                    print_action_message "Removing empty directory: ${empty_dir#$TARGET_DIR/}"
+                    rmdir "$empty_dir" 2>/dev/null && ((removed++))
+                fi
+            done < <(find "$search_path" -depth -type d -print0 2>/dev/null)
+        fi
+    done
+
+    if [ "$removed" -gt 0 ]; then
+        print_success_message "Removed $removed empty director(ies)"
+    fi
+}
+
 restore_backups() {
     print_line_break "Restoring Backup Files"
 
     print_info_message "Searching for backup files..."
 
-    # Find all backup files
-    local backup_files
-    backup_files=$(find "$TARGET_DIR" -name "*.backup.*" -type f 2>/dev/null)
-
-    if [ -z "$backup_files" ]; then
-        print_warning_message "No backup files found"
-        return 0
-    fi
-
-    print_info_message "Found backup files. Restoring..."
-
-    echo "$backup_files" | while read -r backup_file; do
+    local restored=0
+    # Find all backup files using process substitution to avoid subshell
+    while IFS= read -r -d '' backup_file; do
         # Extract original filename by removing .backup.TIMESTAMP
         local original_file="${backup_file%.backup.*}"
 
         # Only restore if the original doesn't exist or is a broken symlink
         if [ ! -e "$original_file" ] || [ -L "$original_file" ]; then
-            print_action_message "Restoring: $(basename "$original_file")"
+            print_action_message "Restoring: ${original_file#$TARGET_DIR/}"
             rm -f "$original_file"  # Remove broken symlink if exists
             mv "$backup_file" "$original_file"
+            ((restored++))
         else
-            print_warning_message "Skipping (file exists): $(basename "$original_file")"
+            print_warning_message "Skipping (file exists): ${original_file#$TARGET_DIR/}"
         fi
-    done
+    done < <(find "$TARGET_DIR" -name "*.backup.*" -type f -print0 2>/dev/null)
 
-    print_success_message "Backup restoration complete!"
+    if [ "$restored" -eq 0 ]; then
+        print_warning_message "No backup files found or restored"
+    else
+        print_success_message "Restored $restored file(s) from backup"
+    fi
 }
 
 show_usage() {
@@ -191,6 +311,7 @@ show_usage() {
 Usage: $0 <command>
 
 Commands:
+    fix         🔧 Auto-fix dotfile linking issues (RECOMMENDED)
     link        Link all dotfiles using GNU Stow
     unlink      Remove all dotfile symlinks
     relink      Refresh symlinks (unlink + link)
@@ -199,13 +320,21 @@ Commands:
     help        Show this help message
 
 Examples:
+    $0 fix               # Automatically fix any linking issues (start here!)
     $0 link              # Link dotfiles to home directory
     $0 simulate          # See what would happen (dry-run)
     $0 unlink            # Remove all symlinks
     $0 relink            # Refresh all symlinks
     $0 restore           # Restore from backups if linking failed
 
-Note: Existing files will be backed up automatically with .backup suffix
+Troubleshooting:
+    If you see only backup files and no symlinks:
+      → Run: $0 fix
+
+    If stow reports conflicts:
+      → Run: $0 fix
+
+Note: Existing files will be backed up automatically with .backup.TIMESTAMP suffix
 EOF
 }
 
@@ -216,6 +345,9 @@ EOF
 COMMAND="${1:-help}"
 
 case "$COMMAND" in
+    fix)
+        fix_dotfiles
+        ;;
     link)
         link_dotfiles
         ;;
