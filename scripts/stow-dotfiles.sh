@@ -306,33 +306,154 @@ restore_backups() {
     fi
 }
 
+clean_backups() {
+    print_line_break "Cleaning Up Backup Files"
+
+    print_info_message "Searching for backup files..."
+
+    # Find all backup files
+    local backup_files
+    backup_files=$(find "$TARGET_DIR" -name "*.backup.*" -type f 2>/dev/null)
+
+    if [ -z "$backup_files" ]; then
+        print_success_message "No backup files found - already clean!"
+        return 0
+    fi
+
+    # Count and show backup files
+    local backup_count
+    backup_count=$(echo "$backup_files" | wc -l | tr -d ' ')
+
+    print_warning_message "Found $backup_count backup file(s):"
+    echo ""
+
+    # Show first 20 backup files
+    echo "$backup_files" | head -20 | while read -r file; do
+        echo "  - ${file#$TARGET_DIR/}"
+    done
+
+    if [ "$backup_count" -gt 20 ]; then
+        echo "  ... and $((backup_count - 20)) more"
+    fi
+
+    echo ""
+    print_warning_message "⚠️  This will PERMANENTLY delete all backup files!"
+    print_info_message "If you want to restore them first, press Ctrl+C and run: $0 restore"
+    echo ""
+    read -p "Are you sure you want to delete all backups? (yes/no): " -r
+    echo
+
+    if [[ ! $REPLY =~ ^[Yy][Ee][Ss]$ ]]; then
+        print_info_message "Cancelled - no files were deleted"
+        return 0
+    fi
+
+    # Delete backup files
+    local deleted=0
+    while IFS= read -r -d '' backup_file; do
+        rm -f "$backup_file"
+        ((deleted++))
+    done < <(find "$TARGET_DIR" -name "*.backup.*" -type f -print0 2>/dev/null)
+
+    print_success_message "Deleted $deleted backup file(s)"
+    print_info_message "Your home directory is now clean of backup files"
+}
+
+verify_links() {
+    print_line_break "Verifying Dotfile Symlinks"
+
+    check_stow_installed
+
+    print_info_message "Checking symlink status..."
+    echo ""
+
+    local total_files=0
+    local linked_files=0
+    local missing_files=0
+    local regular_files=0
+
+    # Check key dotfiles
+    cd "$STOW_DIR/$STOW_PACKAGE" || exit 1
+
+    while IFS= read -r -d '' source_file; do
+        local rel_file="${source_file#./}"
+        local target_file="$TARGET_DIR/$rel_file"
+        ((total_files++))
+
+        if [ -L "$target_file" ]; then
+            # It's a symlink - check if it points to the right place
+            local link_target
+            link_target=$(readlink "$target_file")
+            if [[ "$link_target" == *"dotfiles-mac-os/stow/dotfiles"* ]] || [[ "$link_target" == "$STOW_DIR/$STOW_PACKAGE/$rel_file" ]]; then
+                echo "✓ $rel_file → symlinked correctly"
+                ((linked_files++))
+            else
+                echo "⚠ $rel_file → symlinked to wrong location: $link_target"
+            fi
+        elif [ -e "$target_file" ]; then
+            # File exists but is not a symlink
+            echo "✗ $rel_file → exists as regular file (NOT symlinked)"
+            ((regular_files++))
+        else
+            # File doesn't exist at all
+            echo "✗ $rel_file → missing (not linked)"
+            ((missing_files++))
+        fi
+    done < <(find . -type f -print0)
+
+    cd - > /dev/null || exit 1
+
+    echo ""
+    print_line_break "Summary"
+    echo "Total files in stow package: $total_files"
+    echo "Correctly symlinked: $linked_files"
+    echo "Regular files (not symlinked): $regular_files"
+    echo "Missing: $missing_files"
+    echo ""
+
+    if [ "$linked_files" -eq "$total_files" ]; then
+        print_success_message "All dotfiles are correctly symlinked!"
+    else
+        print_warning_message "Some files are not properly symlinked"
+        print_info_message "Run: $0 fix"
+    fi
+}
+
 show_usage() {
     cat << EOF
 Usage: $0 <command>
 
 Commands:
-    fix         🔧 Auto-fix dotfile linking issues (RECOMMENDED)
-    link        Link all dotfiles using GNU Stow
-    unlink      Remove all dotfile symlinks
-    relink      Refresh symlinks (unlink + link)
-    simulate    Dry-run to see what would be linked
-    restore     Restore files from .backup.* files
-    help        Show this help message
+    fix             🔧 Auto-fix dotfile linking issues (RECOMMENDED)
+    verify          Check symlink status
+    link            Link all dotfiles using GNU Stow
+    unlink          Remove all dotfile symlinks
+    relink          Refresh symlinks (unlink + link)
+    simulate        Dry-run to see what would be linked
+    restore         Restore files from .backup.* files
+    clean-backups   Delete all .backup.* files permanently
+    help            Show this help message
 
 Examples:
+    $0 verify            # Check if symlinks are working correctly
     $0 fix               # Automatically fix any linking issues (start here!)
     $0 link              # Link dotfiles to home directory
     $0 simulate          # See what would happen (dry-run)
     $0 unlink            # Remove all symlinks
     $0 relink            # Refresh all symlinks
     $0 restore           # Restore from backups if linking failed
+    $0 clean-backups     # Remove all backup files (after verifying dotfiles work)
 
 Troubleshooting:
-    If you see only backup files and no symlinks:
-      → Run: $0 fix
+    If you see files instead of symlinks:
+      → Run: $0 verify (to see what's wrong)
+      → Run: $0 fix (to fix it)
 
     If stow reports conflicts:
       → Run: $0 fix
+
+    If everything works and you want to clean up:
+      → Run: $0 clean-backups (removes all .backup.* files)
 
 Note: Existing files will be backed up automatically with .backup.TIMESTAMP suffix
 EOF
@@ -348,6 +469,9 @@ case "$COMMAND" in
     fix)
         fix_dotfiles
         ;;
+    verify|check|status)
+        verify_links
+        ;;
     link)
         link_dotfiles
         ;;
@@ -362,6 +486,9 @@ case "$COMMAND" in
         ;;
     restore)
         restore_backups
+        ;;
+    clean-backups|cleanup|clean)
+        clean_backups
         ;;
     help|--help|-h)
         show_usage
