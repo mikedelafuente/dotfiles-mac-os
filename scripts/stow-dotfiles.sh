@@ -36,21 +36,32 @@ backup_existing_files() {
     backup_timestamp="$(date +%Y%m%d_%H%M%S)"
     local files_backed_up=0
 
-    # Find all files in the stow package directory
-    # and backup any that exist as regular files (not symlinks) in target
-    while IFS= read -r -d '' source_file; do
-        # Get relative path from stow package
-        local rel_path="${source_file#$STOW_DIR/$STOW_PACKAGE/}"
-        local target_file="$TARGET_DIR/$rel_path"
+    # Get list of all files in stow package (store in array to avoid subshell issues)
+    local file_list
+    file_list=$(cd "$STOW_DIR/$STOW_PACKAGE" && find . -type f | sed 's|^\./||')
+
+    # Process each file
+    for rel_file in $file_list; do
+        local target_file="$TARGET_DIR/$rel_file"
 
         # If target exists and is NOT a symlink, back it up
         if [ -e "$target_file" ] && [ ! -L "$target_file" ]; then
             local backup_file="$target_file.backup.$backup_timestamp"
-            print_action_message "Backing up: $rel_path"
-            mv "$target_file" "$backup_file"
-            ((files_backed_up++))
+            local backup_dir
+            backup_dir="$(dirname "$backup_file")"
+
+            # Ensure backup directory exists
+            mkdir -p "$backup_dir"
+
+            print_action_message "Backing up: $rel_file"
+            if mv "$target_file" "$backup_file"; then
+                ((files_backed_up++))
+            else
+                print_error_message "Failed to backup: $rel_file"
+                exit 1
+            fi
         fi
-    done < <(find "$STOW_DIR/$STOW_PACKAGE" -type f -print0)
+    done
 
     if [ "$files_backed_up" -eq 0 ]; then
         print_success_message "No conflicts found - ready to link!"
