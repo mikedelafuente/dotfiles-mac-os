@@ -34,4 +34,9 @@ y = 5
 history = 10000
 multiplier = 3
 
+[env]
+# Set TERM to xterm-256color for better tmux compatibility on macOS
+# The default "alacritty" TERM may not have terminfo installed
+TERM = "xterm-256color"
+
 [mouse]
