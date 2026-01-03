@@ -1,85 +1,62 @@
 -- ============================================================================
 -- Treesitter Configuration
 -- ============================================================================
--- Better syntax highlighting and code understanding
+-- Better syntax highlighting and code understanding using tree-sitter parsers
 
 return {
   "nvim-treesitter/nvim-treesitter",
   build = ":TSUpdate",
-  event = { "BufReadPost", "BufNewFile" },
-  dependencies = {
-    "nvim-treesitter/nvim-treesitter-textobjects",  -- Additional text objects
-  },
+  lazy = false,
   config = function()
-    local ok, configs = pcall(require, "nvim-treesitter.configs")
-    if not ok then
-      vim.notify("Failed to load nvim-treesitter.configs. Is treesitter installed?", vim.log.levels.WARN)
-      return
-    end
+    -- Install language parsers
+    local parsers = {
+      "bash",
+      "c",
+      "css",
+      "dockerfile",
+      "go",
+      "html",
+      "javascript",
+      "json",
+      "lua",
+      "markdown",
+      "markdown_inline",
+      "php",
+      "python",
+      "rust",
+      "toml",
+      "typescript",
+      "vim",
+      "yaml",
+    }
 
-    configs.setup({
-      -- Install parsers for these languages
-      ensure_installed = {
-        "bash",
-        "c",
-        "c_sharp",
-        "css",
-        "dockerfile",
-        "go",
-        "html",
-        "javascript",
-        "json",
-        "lua",
-        "markdown",
-        "markdown_inline",
-        "php",
-        "python",
-        "rust",
-        "toml",
-        "typescript",
-        "vim",
-        "yaml",
-      },
-      
-      -- Install parsers synchronously (only applied to `ensure_installed`)
-      sync_install = false,
-      
-      -- Automatically install missing parsers when entering buffer
-      auto_install = true,
-      
-      highlight = {
-        enable = true,
-        additional_vim_regex_highlighting = false,
-      },
-      
-      indent = {
-        enable = true,
-      },
-      
-      -- Incremental selection
-      incremental_selection = {
-        enable = true,
-        keymaps = {
-          init_selection = "<C-space>",
-          node_incremental = "<C-space>",
-          scope_incremental = false,
-          node_decremental = "<bs>",
-        },
-      },
-      
-      -- Text objects
-      textobjects = {
-        select = {
-          enable = true,
-          lookahead = true,
-          keymaps = {
-            ["af"] = "@function.outer",
-            ["if"] = "@function.inner",
-            ["ac"] = "@class.outer",
-            ["ic"] = "@class.inner",
-          },
-        },
-      },
+    -- Install parsers asynchronously
+    require("nvim-treesitter").install(parsers)
+
+    -- Enable treesitter highlighting for all file types
+    vim.api.nvim_create_autocmd("FileType", {
+      pattern = "*",
+      callback = function()
+        pcall(vim.treesitter.start)
+      end,
+    })
+
+    -- Enable treesitter-based folding
+    vim.api.nvim_create_autocmd("FileType", {
+      pattern = "*",
+      callback = function()
+        vim.wo[0][0].foldexpr = "v:lua.vim.treesitter.foldexpr()"
+        vim.wo[0][0].foldmethod = "expr"
+        vim.wo[0][0].foldenable = false  -- Don't fold by default
+      end,
+    })
+
+    -- Enable treesitter-based indentation
+    vim.api.nvim_create_autocmd("FileType", {
+      pattern = "*",
+      callback = function()
+        vim.bo.indentexpr = "v:lua.require('nvim-treesitter').indentexpr()"
+      end,
     })
   end,
 }

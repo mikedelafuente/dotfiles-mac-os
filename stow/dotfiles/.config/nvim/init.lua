@@ -1,7 +1,6 @@
 -- ============================================================================
 -- Neovim Configuration
 -- ============================================================================
-print("Loading dotfiles-mac-os Neovim configuration...")
 -- A clean, beginner-friendly Neovim setup with LSP support for multiple languages
 --
 -- Quick Start Guide:
