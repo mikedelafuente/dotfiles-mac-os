@@ -12,19 +12,19 @@ size = 12.0
 
 [font.bold]
 family = "Hack Nerd Font Mono"
-style = "Heavy"
+style = "Bold"
 
 [font.bold_italic]
 family = "Hack Nerd Font Mono"
-style = "Heavy Italic"
+style = "Bold Italic"
 
 [font.italic]
 family = "Hack Nerd Font Mono"
-style = "Medium Italic"
+style = "Italic"
 
 [font.normal]
 family = "Hack Nerd Font Mono"
-style = "Medium"
+style = "Regular"
 
 [window.padding]
 x = 5
